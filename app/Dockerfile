@@ -17,6 +17,10 @@ FROM base AS runtime
 ENV NODE_ENV=production PORT=3000
 ARG APP_VERSION=0.1.0
 ARG GIT_SHA=local
+# npm is only needed while building dependencies. Removing it keeps the
+# runtime image limited to the Node.js application and avoids shipping the
+# base image's unused global npm dependency tree.
+RUN rm -rf /usr/local/lib/node_modules/npm /usr/local/bin/npm /usr/local/bin/npx
 ENV APP_VERSION=${APP_VERSION} GIT_SHA=${GIT_SHA}
 LABEL org.opencontainers.image.title="DevOps Portfolio" \
       org.opencontainers.image.description="Portfolio app for a DevOps delivery project" \
