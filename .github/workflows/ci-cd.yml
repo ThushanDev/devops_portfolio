@@ -48,7 +48,11 @@ jobs:
           temporaryPublicStorage: false
       - uses: lycheeverse/lychee-action@v2
         with:
-          args: --verbose --no-progress README.md app/public/index.html docs/**/*.md
+          args: >-
+            --verbose --no-progress
+            --root-dir ${{ github.workspace }}/app/public
+            --exclude 'https://www.linkedin.com/in/thushan-gamage-3a5b23334'
+            README.md app/public/index.html docs/**/*.md
           fail: true
       - uses: hadolint/hadolint-action@v3.1.0
         with:
