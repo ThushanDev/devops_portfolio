@@ -34,7 +34,7 @@
 - [x] Prometheus/Grafana starter values, dashboard, alert rules, and k6 script
 - [x] Architecture decisions, cost notes, runbook, interview notes, security policy
 - [x] Render and lint Helm chart; validate Terraform configuration
-- [ ] Validate monitoring YAML configuration
+- [x] Parse monitoring values and alert-rule YAML with Helm
 - [ ] Run tests, lint, Docker build and local smoke check
 - [ ] Verify Lighthouse, accessibility, and responsive layout in a browser
 - [ ] Complete clean-room README walkthrough and capture demonstration evidence
@@ -42,6 +42,6 @@
 ## Current validation status
 
 - JavaScript syntax checks, JSON parsing, portfolio local-asset reference checks, Terraform fmt/validate, Helm lint/template rendering, and YAML syntax parsing for `render.yaml` pass; a basic scan found no hardcoded AWS access key or private-key markers.
-- Jest, ESLint, and Prettier remain unrun because npm registry requests do not complete, so `package-lock.json` could not be generated.
+- Jest, ESLint, Prettier, and Docker build remain unrun: npm access to `registry.npmjs.org` fails with `EACCES`, so `package-lock.json` and dependencies are unavailable.
 - Docker Desktop is installed, but its Linux engine cannot start because WSL is not installed; WSL setup needs an administrator and may require a restart. The image build and local smoke check remain unrun.
-- Terraform formatting/validation passed for both the main stack and bootstrap, and Helm lint/template rendering passed using verified temporary CLI downloads. Monitoring YAML validation remains pending. GitHub repository protections and free Render account connection/first deployment still need account-side setup; AWS remains optional and out of scope under the no-budget constraint.
+- Terraform formatting/validation passed for both the main stack and bootstrap, and Helm lint/template rendering passed using verified temporary CLI downloads. Helm also parsed the monitoring values and PrometheusRule YAML. GitHub repository protections and free Render account connection/first deployment still need account-side setup; AWS remains optional and out of scope under the no-budget constraint.
