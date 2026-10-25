@@ -1,0 +1,9 @@
+node_modules
+app/.npm-cache
+npm-debug.log*
+.git
+.github
+coverage
+.env*
+*.tfstate*
+terraform.tfvars

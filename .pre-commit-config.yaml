@@ -1,0 +1,29 @@
+repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v5.0.0
+    hooks:
+      - id: check-yaml
+      - id: end-of-file-fixer
+      - id: trailing-whitespace
+  - repo: local
+    hooks:
+      - id: eslint
+        name: eslint
+        entry: npm run lint --prefix app
+        language: system
+        pass_filenames: false
+      - id: gitleaks
+        name: gitleaks
+        entry: gitleaks protect --staged --redact
+        language: system
+        pass_filenames: false
+      - id: hadolint
+        name: hadolint
+        entry: hadolint app/Dockerfile
+        language: system
+        files: ^app/Dockerfile$
+      - id: terraform-fmt
+        name: terraform fmt
+        entry: terraform fmt -check -recursive infra/terraform
+        language: system
+        pass_filenames: false

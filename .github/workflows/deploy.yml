@@ -1,0 +1,44 @@
+name: deploy-portfolio
+
+on:
+  workflow_dispatch:
+    inputs:
+      image_tag:
+        description: Immutable GHCR commit SHA tag to deploy
+        required: true
+        type: string
+
+permissions:
+  contents: read
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment: production
+    permissions:
+      contents: read
+      packages: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: azure/setup-helm@v4.2.0
+      - uses: azure/setup-kubectl@v4.0.0
+      - name: Configure kubeconfig
+        env:
+          KUBE_CONFIG_B64: ${{ secrets.KUBE_CONFIG }}
+        run: |
+          umask 077
+          printf '%s' "$KUBE_CONFIG_B64" | base64 --decode > "$RUNNER_TEMP/kubeconfig"
+          echo "KUBECONFIG=$RUNNER_TEMP/kubeconfig" >> "$GITHUB_ENV"
+      - name: Deploy exact image and wait for rollout
+        env:
+          IMAGE_TAG: ${{ inputs.image_tag }}
+        run: |
+          [[ "$IMAGE_TAG" =~ ^[0-9a-f]{40}$ ]]
+          helm upgrade --install portfolio k8s/helm/portfolio \
+            --namespace portfolio --create-namespace \
+            --set image.repository=ghcr.io/thushandev/devops_portfolio \
+            --set-string image.tag="$IMAGE_TAG" \
+            --atomic --wait --timeout 5m
+          kubectl -n portfolio rollout status deployment/portfolio-portfolio --timeout=5m
+
+# Configure the production environment with required reviewers before use.
