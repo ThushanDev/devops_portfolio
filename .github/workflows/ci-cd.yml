@@ -71,6 +71,13 @@ jobs:
           target: runtime
           load: true
           tags: devops-portfolio:smoke
+      - name: Save production image for local Docker Desktop
+        run: docker image save --output "$RUNNER_TEMP/devops-portfolio-image.tar" devops-portfolio:smoke
+      - uses: actions/upload-artifact@v4
+        with:
+          name: devops-portfolio-local-image
+          path: ${{ runner.temp }}/devops-portfolio-image.tar
+          retention-days: 3
       - name: Smoke test production image
         shell: bash
         run: |
