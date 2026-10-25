@@ -11,7 +11,9 @@
     "format": "prettier --write .",
     "clean": "node -e \"require('fs').rmSync('coverage', { recursive: true, force: true })\""
   },
-  "engines": { "node": ">=24 <25" },
+  "engines": {
+    "node": ">=24 <25"
+  },
   "dependencies": {
     "@prometheus-io/client": "0.16.1",
     "compression": "1.8.2",

@@ -6,8 +6,9 @@ This runbook is only for the optional AWS learning path. It can create billable 
 
 - Enable MFA on the AWS root account; use a non-root administrator for setup.
 - Create an AWS Budget alert before creating resources. Check the live regional calculator and public IPv4 charges.
-- Generate an SSH key locally; Terraform needs only the public key. Keep the private key outside the repo.
-- Record your current public IPv4 CIDR as `/32`; never use `0.0.0.0/0` for ports 22 or 6443.
+- Select an Availability Zone ID that is enabled for your account and region.
+- The private k3s host is managed with Systems Manager Session Manager; no SSH or Kubernetes API ports are exposed.
+- The optional stack uses a NAT gateway and CloudWatch flow logs. Both can incur charges; review current regional pricing first.
 
 ## 2. Terraform state bootstrap
 
@@ -28,7 +29,7 @@ Record the bucket and lock table outputs. The bucket uses versioning, encryption
 
 ## 3. Main AWS stack
 
-Copy `infra/terraform/terraform.tfvars.example` to an untracked `infra/terraform/terraform.tfvars`. Set your CIDR, public key, and bootstrap outputs. Copy `backend.hcl.example` to untracked `backend.hcl` and set the same bucket and table values.
+Copy `infra/terraform/terraform.tfvars.example` to an untracked `infra/terraform/terraform.tfvars`. Set the Availability Zone ID and bootstrap outputs. Copy `backend.hcl.example` to untracked `backend.hcl` and set the same bucket and table values.
 
 ```sh
 terraform -chdir=infra/terraform init -backend-config=backend.hcl
@@ -37,11 +38,11 @@ terraform -chdir=infra/terraform validate
 terraform -chdir=infra/terraform plan
 ```
 
-Review the plan, instance type, storage, public IP, and OIDC role before an approved apply. Do not expose 6443 publicly. The plan role is read-only apart from the state-lock operations needed for planning.
+Review the private subnet, NAT gateway, encrypted VPC flow logs, instance type, storage, and OIDC role before an approved apply. The host has no public IP or inbound management ports. The plan role is read-only apart from state-lock operations needed for planning.
 
 ## 4. Cluster access and image
 
-After the approved apply, use the Terraform output `ssh_command` and the private key on your machine. Retrieve kubeconfig over SSH, protect it locally, and replace its `127.0.0.1` server address with the EC2 public IP. Test `kubectl get nodes` from your machine or through an SSH tunnel.
+After the approved apply, start a Systems Manager Session Manager session to the Terraform output `instance_id`. Retrieve kubeconfig inside that private session and keep it in a protected local file. The Kubernetes API remains private; use a Session Manager port-forward when operating the cluster remotely.
 
 Protect `main`, configure the production environment, and verify GHCR package visibility. If GHCR is private, create the Kubernetes image pull secret as described in the Helm chart README. Configure GitHub Actions `KUBE_CONFIG` in the protected environment; never print it.
 

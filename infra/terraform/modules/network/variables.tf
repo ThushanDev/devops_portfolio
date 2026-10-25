@@ -1,5 +1,6 @@
 variable "project_name" { type = string }
-variable "my_ip_cidr" { type = string }
 variable "vpc_cidr" { type = string }
-variable "subnet_cidr" { type = string }
-variable "az" { type = string }
+variable "public_subnet_cidr" { type = string }
+variable "private_subnet_cidr" { type = string }
+variable "availability_zone_id" { type = string }
+variable "aws_region" { type = string }

@@ -8,12 +8,12 @@ variable "project_name" {
   type        = string
   default     = "devops-portfolio"
 }
-variable "my_ip_cidr" {
-  description = "Your public IPv4 address in CIDR notation, used for SSH and Kubernetes API access."
+variable "availability_zone_id" {
+  description = "Pinned AWS Availability Zone ID for the single-node, single-AZ AWS demo stack."
   type        = string
   validation {
-    condition     = can(cidrnetmask(var.my_ip_cidr)) && !contains(["0.0.0.0/0"], var.my_ip_cidr)
-    error_message = "Provide a restricted IPv4 CIDR; 0.0.0.0/0 is not allowed."
+    condition     = can(regex("^[a-z]{3,4}[0-9]-az[0-9]+$", var.availability_zone_id))
+    error_message = "Provide a valid Availability Zone ID such as aps1-az1 for your account and region."
   }
 }
 variable "instance_type" {
@@ -25,11 +25,6 @@ variable "k3s_version" {
   description = "Pinned k3s release installed on the EC2 host."
   type        = string
   default     = "v1.37.1+k3s1"
-}
-variable "public_key" {
-  description = "Public SSH key material. Never provide or store a private key here."
-  type        = string
-  sensitive   = true
 }
 variable "tags" {
   description = "Tags applied to all resources."

@@ -27,8 +27,7 @@ jobs:
         env:
           TF_STATE_BUCKET: ${{ vars.TF_STATE_BUCKET }}
           TF_LOCK_TABLE: ${{ vars.TF_LOCK_TABLE }}
-          OPERATOR_CIDR: ${{ vars.OPERATOR_CIDR }}
-          SSH_PUBLIC_KEY: ${{ vars.SSH_PUBLIC_KEY }}
+          AVAILABILITY_ZONE_ID: ${{ vars.AVAILABILITY_ZONE_ID }}
           AWS_REGION: ${{ vars.AWS_REGION }}
         run: |
           umask 077
@@ -41,8 +40,7 @@ jobs:
           EOF
           cat > terraform.tfvars <<EOF
           aws_region = "$AWS_REGION"
-          my_ip_cidr = "$OPERATOR_CIDR"
-          public_key = "$SSH_PUBLIC_KEY"
+          availability_zone_id = "$AVAILABILITY_ZONE_ID"
           terraform_state_bucket = "$TF_STATE_BUCKET"
           terraform_lock_table = "$TF_LOCK_TABLE"
           EOF

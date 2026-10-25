@@ -22,26 +22,8 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 24.22.1
-      - name: Bootstrap lockfile for first CI run
-        working-directory: app
-        run: npm install --package-lock-only --ignore-scripts --no-audit --no-fund
-      - name: Format app files and upload generated sources
-        working-directory: app
-        run: npx prettier --write eslint.config.js package.json public/404.html public/index.html public/styles.css src/app.js src/server.js
-      - name: Upload generated lockfile and formatted app files
-        uses: actions/upload-artifact@v4
-        with:
-          name: app-bootstrap-sources
-          path: |
-            app/package-lock.json
-            app/eslint.config.js
-            app/package.json
-            app/public/404.html
-            app/public/index.html
-            app/public/styles.css
-            app/src/app.js
-            app/src/server.js
-          if-no-files-found: error
+          cache: npm
+          cache-dependency-path: app/package-lock.json
       - run: npm ci
         working-directory: app
       - run: npm run lint
@@ -66,7 +48,7 @@ jobs:
           temporaryPublicStorage: false
       - uses: lycheeverse/lychee-action@v2
         with:
-          args: --verbose --no-progress README.md app/public/index.html docs/**/*.md
+          args: --verbose --no-progress --root-dir app/public README.md app/public/index.html docs/**/*.md
           fail: true
       - uses: hadolint/hadolint-action@v3.1.0
         with:

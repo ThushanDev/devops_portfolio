@@ -18,7 +18,7 @@ Check the Ingress host, DNS record, cert-manager Certificate and Challenge resou
 
 ## Cluster unreachable
 
-Check EC2 state and security group source CIDR. Refresh the operator's IP variable if it changed. Do not widen SSH or Kubernetes API access to the world.
+Check EC2 state, private subnet routing, NAT gateway health, the instance profile, and Systems Manager connectivity. Keep SSH and Kubernetes API ports closed to inbound traffic.
 
 ## Tear down
 

@@ -32,10 +32,43 @@ resource "aws_iam_role" "terraform_plan" {
 }
 data "aws_iam_policy_document" "plan" {
   statement {
-    sid       = "DescribeInfrastructure"
-    effect    = "Allow"
-    actions   = ["ec2:Describe*", "iam:Get*", "iam:List*"]
+    sid    = "DescribeInfrastructure"
+    effect = "Allow"
+    actions = [
+      "ec2:DescribeAddresses",
+      "ec2:DescribeAvailabilityZones",
+      "ec2:DescribeFlowLogs",
+      "ec2:DescribeImages",
+      "ec2:DescribeInstances",
+      "ec2:DescribeInternetGateways",
+      "ec2:DescribeNatGateways",
+      "ec2:DescribeNetworkInterfaces",
+      "ec2:DescribeRouteTables",
+      "ec2:DescribeSecurityGroups",
+      "ec2:DescribeSubnets",
+      "ec2:DescribeVolumes",
+      "ec2:DescribeVpcs",
+      "ec2:DescribeVpcAttribute",
+      "logs:DescribeLogGroups",
+      "logs:ListTagsForResource",
+    ]
     resources = ["*"]
+  }
+  statement {
+    sid    = "ReadInstanceRoles"
+    effect = "Allow"
+    actions = [
+      "iam:GetInstanceProfile",
+      "iam:GetRole",
+      "iam:GetRolePolicy",
+      "iam:ListAttachedRolePolicies",
+      "iam:ListInstanceProfilesForRole",
+      "iam:ListRolePolicies",
+    ]
+    resources = [
+      "arn:aws:iam::*:instance-profile/*",
+      "arn:aws:iam::*:role/*",
+    ]
   }
   statement {
     sid       = "ListTerraformStateBucket"

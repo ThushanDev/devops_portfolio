@@ -24,17 +24,24 @@ const duration = new client.Histogram({
 });
 
 app.disable('x-powered-by');
-app.use(helmet({
-  contentSecurityPolicy: {
-    directives: {
-      defaultSrc: ["'self'"], scriptSrc: ["'self'"], styleSrc: ["'self'"],
-      imgSrc: ["'self'", 'data:', 'https://github.com'], connectSrc: ["'self'"], objectSrc: ["'none'"],
-      baseUri: ["'self'"], frameAncestors: ["'none'"],
-      upgradeInsecureRequests: process.env.NODE_ENV === 'production' ? [] : null,
+app.use(
+  helmet({
+    contentSecurityPolicy: {
+      directives: {
+        defaultSrc: ["'self'"],
+        scriptSrc: ["'self'"],
+        styleSrc: ["'self'"],
+        imgSrc: ["'self'", 'data:', 'https://github.com'],
+        connectSrc: ["'self'"],
+        objectSrc: ["'none'"],
+        baseUri: ["'self'"],
+        frameAncestors: ["'none'"],
+        upgradeInsecureRequests: process.env.NODE_ENV === 'production' ? [] : null,
+      },
     },
-  },
-  crossOriginEmbedderPolicy: false,
-}));
+    crossOriginEmbedderPolicy: false,
+  }),
+);
 app.use(compression());
 app.use((req, res, next) => {
   if (req.path === '/metrics') return next();
@@ -54,9 +61,13 @@ app.use((req, res, next) => {
 const publicDir = path.join(__dirname, '..', 'public');
 app.get('/', (_req, res) => {
   const page = fs.readFileSync(path.join(publicDir, 'index.html'), 'utf8');
-  res.type('html').send(page
-    .replaceAll('__APP_VERSION__', escapeHtml(process.env.APP_VERSION || '0.1.0'))
-    .replaceAll('__GIT_SHA__', escapeHtml(process.env.GIT_SHA || 'local')));
+  res
+    .type('html')
+    .send(
+      page
+        .replaceAll('__APP_VERSION__', escapeHtml(process.env.APP_VERSION || '0.1.0'))
+        .replaceAll('__GIT_SHA__', escapeHtml(process.env.GIT_SHA || 'local')),
+    );
 });
 app.get('/health', (_req, res) => res.json({ status: 'ok' }));
 app.get('/metrics', async (_req, res, next) => {

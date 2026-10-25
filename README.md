@@ -83,10 +83,10 @@ Required repo settings/actions:
 Terraform is split into a state bootstrap and the main stack. The state bucket has versioning, server-side encryption, public-access blocking, and a policy that rejects insecure transport. These resources may incur charges, so this optional AWS path is not used for the free hosted app. If you later choose to use it, review regional pricing and the prerequisites in `docs/first-deploy.md` before any apply.
 
 1. Review `docs/cost.md` and AWS regional pricing.
-2. Generate an SSH key locally and use only its public key in `public_key`.
+2. Choose a pinned Availability Zone ID available in your account and set `availability_zone_id`.
 3. Review `infra/bootstrap` before running Terraform. State storage can incur charges and has `prevent_destroy` enabled.
-4. Review the main Terraform plan and security group CIDR before any apply. Port 6443 is restricted to `my_ip_cidr`.
-5. Install/verify k3s and retrieve kubeconfig through SSH. Keep kubeconfig private.
+4. Review the private subnet, NAT gateway, encrypted flow logs, instance profile, and expected billable resources before any apply.
+5. Administer the private host through AWS Systems Manager Session Manager. Keep kubeconfig private.
 6. Build and publish an image through the protected GitHub workflow, then deploy the exact SHA tag with Helm.
 7. Configure a real DNS name and TLS issuer before enabling public HTTPS; see `k8s/cert-manager/README.md`.
 
