@@ -1,0 +1,15 @@
+node_modules/
+.npm-cache/
+coverage/
+.env
+.env.*
+!.env.example
+*.tfstate
+*.tfstate.*
+.terraform/
+terraform.tfvars
+backend.hcl
+*.pem
+kubeconfig
+*.kubeconfig
+.DS_Store

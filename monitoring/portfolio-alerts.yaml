@@ -1,0 +1,34 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: portfolio-alerts
+  labels:
+    release: monitoring
+spec:
+  groups:
+    - name: portfolio.availability
+      rules:
+        - alert: PortfolioTargetDown
+          expr: up{job=~".*portfolio.*"} == 0
+          for: 2m
+          labels:
+            severity: warning
+          annotations:
+            summary: Portfolio metrics target is down
+            description: Prometheus has failed to scrape the portfolio for two minutes.
+        - alert: PortfolioHighHttpErrorRate
+          expr: |
+            sum(rate(http_requests_total{status_code=~"5.."}[5m]))
+            / clamp_min(sum(rate(http_requests_total[5m])), 0.001) > 0.05
+          for: 5m
+          labels:
+            severity: warning
+          annotations:
+            summary: Portfolio HTTP 5xx rate is above 5 percent
+        - alert: PortfolioPodRestarts
+          expr: increase(kube_pod_container_status_restarts_total{pod=~".*portfolio.*"}[15m]) > 2
+          for: 2m
+          labels:
+            severity: warning
+          annotations:
+            summary: Portfolio pod restarted repeatedly

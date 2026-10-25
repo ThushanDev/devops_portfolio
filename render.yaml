@@ -1,0 +1,14 @@
+services:
+  - type: web
+    name: thushan-devops-portfolio
+    runtime: docker
+    plan: free
+    region: singapore
+    branch: main
+    dockerfilePath: ./app/Dockerfile
+    dockerContext: .
+    healthCheckPath: /health
+    autoDeployTrigger: checksPass
+    envVars:
+      - key: PORT
+        value: "3000"
