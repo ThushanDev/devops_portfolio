@@ -17,7 +17,7 @@
 - [x] Dependabot configuration
 - [ ] Confirm GitHub repository, branch protection, package visibility, and protected environment
 - [ ] Connect the public repository to a Render free service and verify live health endpoint (no payment method)
-- [ ] Keep AWS stack optional; do not provision while zero-spend constraint applies
+- [x] Keep AWS stack optional; do not provision while zero-spend constraint applies
 
 ## Infrastructure and runtime
 
@@ -26,8 +26,8 @@
 - [x] k3s user data and operator-only kubeconfig path
 - [x] Helm chart with probes, resource limits, rolling updates, Ingress, PDB, and optional HPA
 - [x] Verify Terraform formatting and validation with the selected provider versions (main stack and bootstrap)
-- [ ] Review regional cost, budget alert, domain, IP CIDR, and account prerequisites before apply
-- [ ] Configure TLS and execute the first deployment after explicit approval
+- [ ] Optional AWS path only: review regional cost, budget alert, domain, IP CIDR, and account prerequisites before apply
+- [ ] Optional AWS path only: configure TLS and execute the first deployment after explicit approval
 
 ## Monitoring and handoff
 
@@ -42,6 +42,7 @@
 ## Current validation status
 
 - JavaScript syntax checks, JSON parsing, portfolio local-asset reference checks, Terraform fmt/validate, Helm lint/template rendering, and YAML syntax parsing for `render.yaml` pass; a basic scan found no hardcoded AWS access key or private-key markers.
+- Core zero-budget checklist progress: 20/25 complete (80%); the two unchecked AWS apply/deploy items are optional and excluded from this count.
 - Jest, ESLint, Prettier, and Docker build remain unrun: npm access to `registry.npmjs.org` fails with `EACCES`, so `package-lock.json` and dependencies are unavailable.
 - Docker Desktop is installed, but its Linux engine cannot start because WSL is not installed; WSL setup needs an administrator and may require a restart. The image build and local smoke check remain unrun.
 - Terraform formatting/validation passed for both the main stack and bootstrap, and Helm lint/template rendering passed using verified temporary CLI downloads. Helm also parsed the monitoring values and PrometheusRule YAML. GitHub repository protections and free Render account connection/first deployment still need account-side setup; AWS remains optional and out of scope under the no-budget constraint.
