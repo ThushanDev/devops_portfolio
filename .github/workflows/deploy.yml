@@ -21,7 +21,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: azure/setup-helm@v4.2.0
-      - uses: azure/setup-kubectl@v4.0.0
+      - uses: azure/setup-kubectl@v5.2.0
       - name: Configure kubeconfig
         env:
           KUBE_CONFIG_B64: ${{ secrets.KUBE_CONFIG }}
