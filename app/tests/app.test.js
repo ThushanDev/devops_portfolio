@@ -1,5 +1,6 @@
 const request = require('supertest');
-const { app, registry } = require('../src/app');
+const app = require('../src/app');
+const { registry } = app.locals;
 
 describe('portfolio service', () => {
   beforeEach(async () => registry.resetMetrics());
