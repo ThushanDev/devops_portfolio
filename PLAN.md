@@ -42,6 +42,7 @@
 ## Current validation status
 
 - JavaScript syntax checks, JSON parsing, portfolio local-asset reference checks, Terraform fmt/validate, Helm lint/template rendering, and YAML syntax parsing for `render.yaml` pass; a basic scan found no hardcoded AWS access key or private-key markers.
+- A static HTML accessibility sanity check found one `h1`, a viewport declaration, no images missing `alt`, no unlabeled buttons, and no broken in-page fragment links; browser Lighthouse/contrast checks remain pending.
 - Core zero-budget checklist progress: 20/25 complete (80%); the two unchecked AWS apply/deploy items are optional and excluded from this count.
 - Jest, ESLint, Prettier, and Docker build remain unrun: npm access to `registry.npmjs.org` fails with `EACCES`, so `package-lock.json` and dependencies are unavailable.
 - Docker Desktop is installed, but its Linux engine cannot start because WSL is not installed; WSL setup needs an administrator and may require a restart. The image build and local smoke check remain unrun.
