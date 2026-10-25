@@ -5,6 +5,11 @@ resource "aws_vpc" "this" {
   tags                 = { Name = "${var.project_name}-vpc" }
 }
 
+resource "aws_default_security_group" "this" {
+  vpc_id = aws_vpc.this.id
+  tags   = { Name = "${var.project_name}-default-deny" }
+}
+
 resource "aws_subnet" "public" {
   vpc_id                  = aws_vpc.this.id
   cidr_block              = var.public_subnet_cidr
@@ -68,7 +73,7 @@ resource "aws_route_table_association" "private" {
 
 resource "aws_cloudwatch_log_group" "flow_logs" {
   name              = "/aws/vpc/${var.project_name}/flow-logs"
-  retention_in_days = 30
+  retention_in_days = 365
   kms_key_id        = "arn:aws:kms:${var.aws_region}:${data.aws_caller_identity.current.account_id}:alias/aws/logs"
 }
 

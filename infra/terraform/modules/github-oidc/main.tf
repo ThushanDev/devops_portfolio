@@ -36,7 +36,6 @@ data "aws_iam_policy_document" "plan" {
     effect = "Allow"
     actions = [
       "ec2:DescribeAddresses",
-      "ec2:DescribeAvailabilityZones",
       "ec2:DescribeFlowLogs",
       "ec2:DescribeImages",
       "ec2:DescribeInstances",
@@ -49,10 +48,30 @@ data "aws_iam_policy_document" "plan" {
       "ec2:DescribeVolumes",
       "ec2:DescribeVpcs",
       "ec2:DescribeVpcAttribute",
+    ]
+    resources = [
+      "arn:aws:ec2:${var.aws_region}:*:elastic-ip/*",
+      "arn:aws:ec2:${var.aws_region}:*:flow-log/*",
+      "arn:aws:ec2:${var.aws_region}:*:image/*",
+      "arn:aws:ec2:${var.aws_region}:*:instance/*",
+      "arn:aws:ec2:${var.aws_region}:*:internet-gateway/*",
+      "arn:aws:ec2:${var.aws_region}:*:natgateway/*",
+      "arn:aws:ec2:${var.aws_region}:*:network-interface/*",
+      "arn:aws:ec2:${var.aws_region}:*:route-table/*",
+      "arn:aws:ec2:${var.aws_region}:*:security-group/*",
+      "arn:aws:ec2:${var.aws_region}:*:subnet/*",
+      "arn:aws:ec2:${var.aws_region}:*:volume/*",
+      "arn:aws:ec2:${var.aws_region}:*:vpc/*",
+    ]
+  }
+  statement {
+    sid    = "ReadFlowLogGroup"
+    effect = "Allow"
+    actions = [
       "logs:DescribeLogGroups",
       "logs:ListTagsForResource",
     ]
-    resources = ["*"]
+    resources = ["arn:aws:logs:${var.aws_region}:*:log-group:/aws/vpc/devops-portfolio/flow-logs:*"]
   }
   statement {
     sid    = "ReadInstanceRoles"

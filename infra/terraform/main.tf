@@ -24,6 +24,7 @@ module "github_oidc" {
   repository        = "ThushanDev/devops_portfolio"
   state_bucket_name = var.terraform_state_bucket
   lock_table_name   = var.terraform_lock_table
+  aws_region        = var.aws_region
 }
 
 output "instance_id" {

@@ -11,3 +11,7 @@ variable "lock_table_name" {
   description = "Terraform state lock table used by the main stack."
   type        = string
 }
+variable "aws_region" {
+  description = "AWS region for resource-scoped plan permissions."
+  type        = string
+}
