@@ -74,11 +74,11 @@ jobs:
       - name: Smoke test production image
         shell: bash
         run: |
-          container_id="$(docker run -d --publish 3000:3000 devops-portfolio:smoke)"
+          container_id="$(docker run -d --publish 3001:3000 devops-portfolio:smoke)"
           trap 'docker rm --force "$container_id" >/dev/null 2>&1 || true' EXIT
           for attempt in {1..20}; do
-            if curl --fail --silent http://127.0.0.1:3000/health >/dev/null; then
-              curl --fail --silent http://127.0.0.1:3000/ | grep -q 'Building software'
+            if curl --fail --silent http://127.0.0.1:3001/health >/dev/null; then
+              curl --fail --silent http://127.0.0.1:3001/ | grep -q 'Building software'
               exit 0
             fi
             sleep 1
