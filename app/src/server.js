@@ -1,4 +1,4 @@
-const { app } = require('./app');
+const app = require('./app');
 
 const port = Number.parseInt(process.env.PORT || '3000', 10);
 const server = app.listen(port, '0.0.0.0', () =>

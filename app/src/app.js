@@ -90,6 +90,7 @@ function escapeHtml(value) {
   return String(value).replace(/[&<>"']/g, (char) => entities[char]);
 }
 
-// Vercel requires the Express function itself as the module export. Keep the
-// named properties so the local launcher and tests can continue destructuring.
-module.exports = Object.assign(app, { app, registry });
+// Vercel requires this module to export the Express function directly.
+// Keep test-only access to metrics on locals so the export stays unambiguous.
+app.locals.registry = registry;
+module.exports = app;
