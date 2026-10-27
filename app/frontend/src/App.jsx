@@ -138,7 +138,7 @@ function Header() {
   const closeMenu = () => setMenuOpen(false);
 
   useEffect(() => {
-    const sections = ['work', 'capabilities', 'about', 'contact']
+    const sections = ['work', 'capabilities', 'process', 'about', 'contact']
       .map((id) => document.getElementById(id))
       .filter(Boolean);
     if (!('IntersectionObserver' in window)) return undefined;
@@ -157,16 +157,24 @@ function Header() {
   return (
     <header className="site-header">
       <a className="wordmark" href="#top" onClick={closeMenu} aria-label="Thushan Gamage, home">
-        TG<span>.</span>
+        <img className="brand-avatar" src="/images/thushan-gamage.webp" alt="" />
+        <span className="brand-label">
+          <b>Thushan Gamage</b>
+          <small>Software engineering · OUSL</small>
+        </span>
       </a>
       <button
         className="menu-toggle"
         type="button"
         aria-expanded={menuOpen}
         aria-controls="main-navigation"
+        aria-label={menuOpen ? 'Close navigation' : 'Open navigation'}
         onClick={() => setMenuOpen(!menuOpen)}
       >
-        {menuOpen ? 'Close' : 'Menu'}
+        <span className={menuOpen ? 'menu-glyph is-open' : 'menu-glyph'} aria-hidden="true">
+          <i />
+          <i />
+        </span>
       </button>
       <nav
         id="main-navigation"
@@ -184,6 +192,13 @@ function Header() {
           Capabilities
         </a>
         <a
+          className={activeSection === 'process' ? 'is-active' : ''}
+          href="#process"
+          onClick={closeMenu}
+        >
+          Process
+        </a>
+        <a
           className={activeSection === 'about' ? 'is-active' : ''}
           href="#about"
           onClick={closeMenu}
@@ -199,7 +214,7 @@ function Header() {
         </a>
       </nav>
       <a className="header-cta" href={links.linkedin} target="_blank" rel="noreferrer">
-        Let’s connect <Arrow diagonal />
+        <span className="status-dot" /> Hire me <Arrow diagonal />
       </a>
     </header>
   );
@@ -213,20 +228,17 @@ function Hero() {
           <span className="status-dot" /> SOFTWARE ENGINEERING · PRODUCT · DEVOPS
         </p>
         <h1>
-          Building for
+          Thoughtful software.
           <br />
-          the <em>real world.</em>
+          Reliable <em>delivery.</em>
         </h1>
         <p className="hero-summary">
-          I’m Thushan, a software engineering undergraduate exploring how thoughtful design,
-          dependable code, and cloud delivery come together to make useful products.
+          I’m Thushan Gamage, a software engineering undergraduate who designs, builds, and ships
+          useful digital products with care.
         </p>
         <div className="hero-actions">
           <a className="button button-primary" href="#work">
-            Explore selected work <Arrow />
-          </a>
-          <a className="button button-quiet" href={links.email}>
-            Get in touch <Arrow diagonal />
+            Explore my work <Arrow />
           </a>
           <a className="button button-quiet" href={links.resume} target="_blank" rel="noreferrer">
             View résumé <Arrow diagonal />
@@ -497,7 +509,7 @@ function Process() {
     ['05', 'Ship', 'Package the work clearly and make it ready for people to use.'],
   ];
   return (
-    <section className="process-section section-wrap">
+    <section className="process-section section-wrap" id="process">
       <div className="process-heading reveal">
         <p className="eyebrow">A THOUGHTFUL WAY OF WORKING</p>
         <h2>
@@ -508,14 +520,18 @@ function Process() {
         <p>Good work comes from paying attention at every step.</p>
       </div>
       <div className="process-list">
-        {steps.map(([number, title, copy]) => (
+        {steps.map(([number, title, copy], index) => (
           <article
             className="process-step reveal"
             key={number}
             onPointerMove={tiltCard}
             onPointerLeave={resetCardTilt}
           >
-            <span>{number}</span>
+            <div className={`process-icon process-icon-${index + 1}`} aria-hidden="true">
+              <span>{['✉', '◷', '✳', '</>', '↗'][index]}</span>
+              <i />
+            </div>
+            <span className="process-number">{number}</span>
             <h3>{title}</h3>
             <p>{copy}</p>
             <Arrow diagonal />
