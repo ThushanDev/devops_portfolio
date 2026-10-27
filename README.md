@@ -1,5 +1,9 @@
 # Thushan Gamage — DevOps Portfolio
 
+**Live portfolio:** [devopsportfolio-app.vercel.app](https://devopsportfolio-app.vercel.app/)
+
+This repository powers my personal portfolio and showcases my DevOps learning through CI/CD, secure container delivery, and optional cloud-native infrastructure labs.
+
 An end-to-end delivery project for a personal portfolio app built with React and Vite, served locally and in containers by Express, and deployable as a static site on Vercel. The engineering showcase is the path from a reviewed change to a monitored Kubernetes release.
 
 ## Architecture
