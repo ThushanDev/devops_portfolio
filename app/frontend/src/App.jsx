@@ -283,8 +283,10 @@ function Header() {
 
 function Hero() {
   useEffect(() => {
+    const section = document.querySelector('.hero');
     const stage = document.querySelector('.hero-portrait-wrap');
     if (
+      !section ||
       !stage ||
       !window.matchMedia('(hover: hover) and (pointer: fine)').matches ||
       window.matchMedia('(prefers-reduced-motion: reduce)').matches
@@ -293,38 +295,59 @@ function Hero() {
     let frame = 0;
     let point = null;
     const move = (event) => {
+      const heroBounds = section.getBoundingClientRect();
       const bounds = stage.getBoundingClientRect();
       point = {
         x: (event.clientX - bounds.left) / bounds.width,
         y: (event.clientY - bounds.top) / bounds.height,
+        heroX: (event.clientX - heroBounds.left) / heroBounds.width,
+        heroY: (event.clientY - heroBounds.top) / heroBounds.height,
       };
+      section.classList.add('has-spotlight');
+      stage.classList.add('is-spotlight-active');
       if (!frame)
         frame = window.requestAnimationFrame(() => {
           frame = 0;
           if (!point) return;
-          stage.style.setProperty('--portrait-rotate-y', `${((point.x - 0.5) * 10).toFixed(2)}deg`);
-          stage.style.setProperty('--portrait-rotate-x', `${((0.5 - point.y) * 8).toFixed(2)}deg`);
-          stage.style.setProperty('--pointer-x', `${(point.x * 100).toFixed(1)}%`);
-          stage.style.setProperty('--pointer-y', `${(point.y * 100).toFixed(1)}%`);
+          const imageX = Math.min(1, Math.max(0, point.x));
+          const imageY = Math.min(1, Math.max(0, point.y));
+          const insidePortrait = point.x >= 0 && point.x <= 1 && point.y >= 0 && point.y <= 1;
+          section.style.setProperty('--spotlight-x', `${(point.heroX * 100).toFixed(1)}%`);
+          section.style.setProperty('--spotlight-y', `${(point.heroY * 100).toFixed(1)}%`);
+          stage.style.setProperty(
+            '--portrait-rotate-y',
+            `${(insidePortrait ? (imageX - 0.5) * 10 : 0).toFixed(2)}deg`,
+          );
+          stage.style.setProperty(
+            '--portrait-rotate-x',
+            `${(insidePortrait ? (0.5 - imageY) * 8 : 0).toFixed(2)}deg`,
+          );
+          stage.style.setProperty('--pointer-x', `${(imageX * 100).toFixed(1)}%`);
+          stage.style.setProperty('--pointer-y', `${(imageY * 100).toFixed(1)}%`);
         });
     };
     const leave = () => {
       point = null;
+      section.classList.remove('has-spotlight');
+      stage.classList.remove('is-spotlight-active');
+      section.style.setProperty('--spotlight-x', '50%');
+      section.style.setProperty('--spotlight-y', '48%');
       stage.style.setProperty('--portrait-rotate-y', '0deg');
       stage.style.setProperty('--portrait-rotate-x', '0deg');
       stage.style.setProperty('--pointer-x', '50%');
       stage.style.setProperty('--pointer-y', '50%');
     };
-    stage.addEventListener('pointermove', move, { passive: true });
-    stage.addEventListener('pointerleave', leave);
+    section.addEventListener('pointermove', move, { passive: true });
+    section.addEventListener('pointerleave', leave);
     return () => {
-      stage.removeEventListener('pointermove', move);
-      stage.removeEventListener('pointerleave', leave);
+      section.removeEventListener('pointermove', move);
+      section.removeEventListener('pointerleave', leave);
       if (frame) window.cancelAnimationFrame(frame);
     };
   }, []);
   return (
     <section className="hero section-wrap" id="top">
+      <div className="hero-spotlight" aria-hidden="true" />
       <div className="hero-copy">
         <p className="eyebrow">
           <span className="status-dot" /> ASPIRING DEVOPS ENGINEER · CLOUD · AUTOMATION
