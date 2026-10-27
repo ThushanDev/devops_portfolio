@@ -2114,37 +2114,6 @@ h2 em {
   animation-play-state: paused;
 }
 
-/* A soft, cursor-following light on interactive surfaces, like the reference. */
-.cursor-aura {
-  position: fixed;
-  z-index: 15;
-  top: 50%;
-  left: 50%;
-  width: min(34vw, 390px);
-  aspect-ratio: 1;
-  border-radius: 50%;
-  background: radial-gradient(
-    circle,
-    rgba(240, 240, 233, 0.105) 0%,
-    rgba(198, 251, 114, 0.055) 27%,
-    rgba(198, 251, 114, 0.018) 49%,
-    transparent 72%
-  );
-  opacity: 0;
-  pointer-events: none;
-  transform: translate(-50%, -50%);
-  transition:
-    left 0.19s cubic-bezier(0.2, 0.7, 0.2, 1),
-    top 0.19s cubic-bezier(0.2, 0.7, 0.2, 1),
-    opacity 0.3s ease;
-  mix-blend-mode: screen;
-  will-change: left, top;
-}
-
-.cursor-aura.is-active {
-  opacity: 1;
-}
-
 .project-card,
 .capability-card,
 .process-step {
@@ -2153,12 +2122,6 @@ h2 em {
     transform 0.22s cubic-bezier(0.2, 0.7, 0.2, 1),
     background 0.3s ease,
     border-color 0.3s ease;
-}
-
-@media (max-width: 620px), (prefers-reduced-motion: reduce) {
-  .cursor-aura {
-    display: none;
-  }
 }
 
 @media (max-width: 900px) {
@@ -3445,23 +3408,19 @@ body {
   }
 }
 
-.hero-tubes {
-  position: absolute;
-  z-index: 0;
+.cursor-tubes {
+  position: fixed;
+  z-index: 14;
   inset: 0;
-  width: 100%;
-  height: 100%;
+  width: 100vw;
+  height: 100vh;
   overflow: hidden;
-  opacity: 0.84;
+  opacity: 0.88;
   pointer-events: none;
   mix-blend-mode: screen;
 }
-.hero-portrait-wrap,
-.scroll-cue {
-  z-index: 1;
-}
-@media (prefers-reduced-motion: reduce) {
-  .hero-tubes {
+@media (max-width: 620px), (prefers-reduced-motion: reduce) {
+  .cursor-tubes {
     display: none;
   }
 }

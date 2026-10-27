@@ -325,7 +325,6 @@ function Hero() {
   }, []);
   return (
     <section className="hero section-wrap" id="top">
-      <CursorTubes />
       <div className="hero-copy">
         <p className="eyebrow">
           <span className="status-dot" /> ASPIRING DEVOPS ENGINEER · CLOUD · AUTOMATION
@@ -888,44 +887,50 @@ function CursorTubes() {
 
   useEffect(() => {
     const canvas = canvasRef.current;
-    const stage = canvas?.parentElement;
     const context = canvas?.getContext('2d');
     const supportsPointer = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
     const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    if (!canvas || !stage || !context || !supportsPointer || prefersReducedMotion) return undefined;
+    if (!canvas || !context || !supportsPointer || prefersReducedMotion) return undefined;
 
-    const palette = ['#f967fb', '#c6fb72', '#6958d5'];
+    const palette = ['#f967fb', '#53bc28', '#6958d5'];
     const points = [];
-    const pixelRatio = Math.min(window.devicePixelRatio || 1, 2);
+    const bursts = [];
+    const pixelRatio = Math.min(window.devicePixelRatio || 1, 1.5);
+    let cursor = null;
+    let lastMoveAt = 0;
     let animationFrame = 0;
+    let width = window.innerWidth;
+    let height = window.innerHeight;
 
     const resize = () => {
-      const bounds = stage.getBoundingClientRect();
-      canvas.width = Math.round(bounds.width * pixelRatio);
-      canvas.height = Math.round(bounds.height * pixelRatio);
+      width = window.innerWidth;
+      height = window.innerHeight;
+      canvas.width = Math.round(width * pixelRatio);
+      canvas.height = Math.round(height * pixelRatio);
       context.setTransform(pixelRatio, 0, 0, pixelRatio, 0, 0);
     };
 
-    const drawTube = (now, band, color, fade) => {
+    const buildTrailPath = (now, band) => {
       context.beginPath();
-      const offsetPoint = (index) => {
+      const sample = (index) => {
         const previous = points[Math.max(0, index - 1)];
         const next = points[Math.min(points.length - 1, index + 1)];
         const dx = next.x - previous.x;
         const dy = next.y - previous.y;
         const length = Math.hypot(dx, dy) || 1;
-        const wave = Math.sin(now * 0.002 + index * 0.22 + band * 2.1) * 5;
-        const distance = (band - 1) * 9 + wave;
+        const twist = Math.sin(now * 0.0025 + index * 0.26 + band * 2.1) * 9;
+        const offset = (band - 1) * 12 + twist;
         return {
-          x: points[index].x - (dy / length) * distance,
-          y: points[index].y + (dx / length) * distance,
+          x: points[index].x - (dy / length) * offset,
+          y: points[index].y + (dx / length) * offset,
         };
       };
-      const first = offsetPoint(0);
+
+      const first = sample(0);
       context.moveTo(first.x, first.y);
       for (let index = 1; index < points.length - 1; index += 1) {
-        const current = offsetPoint(index);
-        const next = offsetPoint(index + 1);
+        const current = sample(index);
+        const next = sample(index + 1);
         context.quadraticCurveTo(
           current.x,
           current.y,
@@ -933,36 +938,125 @@ function CursorTubes() {
           (current.y + next.y) / 2,
         );
       }
-      const last = offsetPoint(points.length - 1);
+      const last = sample(points.length - 1);
       context.lineTo(last.x, last.y);
       context.lineCap = 'round';
       context.lineJoin = 'round';
+      return { first, last };
+    };
+
+    const drawTrail = (now, fade) => {
+      palette.forEach((color, band) => {
+        const { first, last } = buildTrailPath(now, band);
+        context.save();
+        context.globalAlpha = fade;
+        context.shadowColor = color;
+        context.shadowBlur = 30;
+        context.strokeStyle = 'rgba(5, 7, 9, 0.74)';
+        context.lineWidth = 19;
+        context.stroke();
+        context.shadowBlur = 20;
+        context.strokeStyle = color;
+        context.lineWidth = 8;
+        context.stroke();
+        const highlight = context.createLinearGradient(first.x, first.y, last.x, last.y);
+        highlight.addColorStop(0, 'rgba(255, 255, 255, 0.08)');
+        highlight.addColorStop(0.7, 'rgba(255, 255, 255, 0.82)');
+        highlight.addColorStop(1, 'rgba(255, 255, 255, 0.25)');
+        context.shadowBlur = 0;
+        context.strokeStyle = highlight;
+        context.lineWidth = 1.6;
+        context.stroke();
+        context.restore();
+      });
+    };
+
+    const drawCursorCore = (now, fade) => {
+      if (!cursor) return;
+      context.save();
       context.globalAlpha = fade;
-      context.shadowColor = color;
-      context.shadowBlur = 24;
-      context.strokeStyle = 'rgba(7, 9, 10, 0.72)';
-      context.lineWidth = 14;
-      context.stroke();
-      context.shadowBlur = 18;
-      context.strokeStyle = color;
-      context.lineWidth = 8;
-      context.stroke();
-      context.shadowBlur = 0;
-      context.strokeStyle = 'rgba(255, 255, 255, 0.76)';
-      context.lineWidth = 1.5;
-      context.stroke();
+      palette.forEach((color, index) => {
+        const spin = now * (index % 2 ? -0.0018 : 0.0018) + index * 1.04;
+        context.beginPath();
+        context.ellipse(cursor.x, cursor.y, 19 + index * 5, 8 + index * 2.5, spin, 0, Math.PI * 2);
+        context.strokeStyle = color;
+        context.lineWidth = 1.7;
+        context.shadowColor = color;
+        context.shadowBlur = 15;
+        context.stroke();
+      });
+
+      for (let index = 0; index < 7; index += 1) {
+        const angle = now * 0.0022 + (index / 7) * Math.PI * 2;
+        const depth = Math.sin(angle);
+        const color = palette[index % palette.length];
+        context.beginPath();
+        context.arc(
+          cursor.x + Math.cos(angle) * (25 + depth * 3),
+          cursor.y + depth * 13,
+          1.4 + (depth + 1) * 0.8,
+          0,
+          Math.PI * 2,
+        );
+        context.fillStyle = color;
+        context.shadowColor = color;
+        context.shadowBlur = 12;
+        context.fill();
+      }
+
+      const core = context.createRadialGradient(cursor.x, cursor.y, 0, cursor.x, cursor.y, 13);
+      core.addColorStop(0, 'rgba(255, 255, 255, 0.9)');
+      core.addColorStop(0.24, 'rgba(255, 255, 255, 0.48)');
+      core.addColorStop(1, 'rgba(255, 255, 255, 0)');
+      context.beginPath();
+      context.arc(cursor.x, cursor.y, 13, 0, Math.PI * 2);
+      context.fillStyle = core;
+      context.fill();
+      context.restore();
+    };
+
+    const drawBursts = (now) => {
+      for (let index = bursts.length - 1; index >= 0; index -= 1) {
+        const burst = bursts[index];
+        const progress = (now - burst.time) / 620;
+        if (progress >= 1) {
+          bursts.splice(index, 1);
+          continue;
+        }
+        for (let spark = 0; spark < 18; spark += 1) {
+          const angle = (spark / 18) * Math.PI * 2 + burst.rotation;
+          const distance = progress * (28 + (spark % 4) * 8);
+          const color = palette[spark % palette.length];
+          context.globalAlpha = 1 - progress;
+          context.beginPath();
+          context.arc(
+            burst.x + Math.cos(angle) * distance,
+            burst.y + Math.sin(angle) * distance,
+            (1 - progress) * (1.5 + (spark % 3) * 0.7),
+            0,
+            Math.PI * 2,
+          );
+          context.fillStyle = color;
+          context.shadowColor = color;
+          context.shadowBlur = 13;
+          context.fill();
+        }
+      }
       context.globalAlpha = 1;
+      context.shadowBlur = 0;
     };
 
     const render = (now) => {
       animationFrame = 0;
-      const bounds = stage.getBoundingClientRect();
-      context.clearRect(0, 0, bounds.width, bounds.height);
-      while (points.length && now - points[0].time > 1050) points.shift();
+      context.clearRect(0, 0, width, height);
+      while (points.length && now - points[0].time > 1200) points.shift();
+      const idleFor = now - lastMoveAt;
+      const trailFade = Math.max(0, 1 - idleFor / 1050);
+      if (points.length > 1 && trailFade > 0) drawTrail(now, trailFade);
+      if (cursor && idleFor < 1350) drawCursorCore(now, Math.max(0, 1 - idleFor / 1350));
+      drawBursts(now);
 
-      if (points.length > 1) {
-        const fade = Math.max(0, 1 - (now - points[points.length - 1].time) / 1050);
-        palette.forEach((color, band) => drawTube(now, band, color, fade));
+      if ((points.length > 1 && trailFade > 0) || (cursor && idleFor < 1350) || bursts.length) {
         animationFrame = window.requestAnimationFrame(render);
       }
     };
@@ -973,95 +1067,60 @@ function CursorTubes() {
 
     const onPointerMove = (event) => {
       if (event.pointerType !== 'mouse') return;
-      const bounds = stage.getBoundingClientRect();
-      const point = {
-        x: event.clientX - bounds.left,
-        y: event.clientY - bounds.top,
-        time: window.performance.now(),
-      };
+      const point = { x: event.clientX, y: event.clientY, time: window.performance.now() };
+      cursor = point;
+      lastMoveAt = point.time;
       const previous = points[points.length - 1];
       if (!previous || Math.hypot(point.x - previous.x, point.y - previous.y) > 3) {
         points.push(point);
-        if (points.length > 34) points.shift();
+        if (points.length > 44) points.shift();
       }
       scheduleRender();
     };
 
     const onPointerLeave = () => {
-      points.length = 0;
-      if (animationFrame) window.cancelAnimationFrame(animationFrame);
-      animationFrame = 0;
-      const bounds = stage.getBoundingClientRect();
-      context.clearRect(0, 0, bounds.width, bounds.height);
+      cursor = null;
+      lastMoveAt = window.performance.now() - 650;
+      scheduleRender();
     };
 
     const randomColor = () =>
       `#${Math.floor(Math.random() * 0xffffff)
         .toString(16)
         .padStart(6, '0')}`;
-    const onClick = () => {
+    const onClick = (event) => {
       palette.forEach((_, index) => {
         palette[index] = randomColor();
       });
+      bursts.push({
+        x: event.clientX,
+        y: event.clientY,
+        time: window.performance.now(),
+        rotation: Math.random() * 3,
+      });
+      if (bursts.length > 3) bursts.shift();
       scheduleRender();
     };
 
     resize();
-    stage.addEventListener('pointermove', onPointerMove, { passive: true });
-    stage.addEventListener('pointerleave', onPointerLeave);
-    stage.addEventListener('click', onClick);
+    window.addEventListener('pointermove', onPointerMove, { passive: true });
+    window.addEventListener('pointerleave', onPointerLeave);
+    window.addEventListener('blur', onPointerLeave);
+    window.addEventListener('click', onClick);
     window.addEventListener('resize', resize, { passive: true });
 
     return () => {
-      stage.removeEventListener('pointermove', onPointerMove);
-      stage.removeEventListener('pointerleave', onPointerLeave);
-      stage.removeEventListener('click', onClick);
+      window.removeEventListener('pointermove', onPointerMove);
+      window.removeEventListener('pointerleave', onPointerLeave);
+      window.removeEventListener('blur', onPointerLeave);
+      window.removeEventListener('click', onClick);
       window.removeEventListener('resize', resize);
       if (animationFrame) window.cancelAnimationFrame(animationFrame);
     };
   }, []);
 
-  return <canvas ref={canvasRef} className="hero-tubes" aria-hidden="true" />;
+  return <canvas ref={canvasRef} className="cursor-tubes" aria-hidden="true" />;
 }
-
-function CursorAura() {
-  useEffect(() => {
-    const aura = document.querySelector('.cursor-aura');
-    const canHover = window.matchMedia('(hover: hover) and (pointer: fine)');
-    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
-    if (!aura || !canHover.matches || reduceMotion.matches) return undefined;
-
-    let frame = 0;
-    let pointer = null;
-    const update = () => {
-      frame = 0;
-      if (!pointer) return;
-      aura.style.left = `${pointer.x}px`;
-      aura.style.top = `${pointer.y}px`;
-      const target = document.elementFromPoint(pointer.x, pointer.y);
-      aura.classList.toggle(
-        'is-active',
-        Boolean(target?.closest('.project-card, .process-step, .capability-card, .button')),
-      );
-    };
-    const onPointerMove = (event) => {
-      pointer = { x: event.clientX, y: event.clientY };
-      if (!frame) frame = window.requestAnimationFrame(update);
-    };
-    const onPointerLeave = () => aura.classList.remove('is-active');
-
-    window.addEventListener('pointermove', onPointerMove, { passive: true });
-    document.documentElement.addEventListener('pointerleave', onPointerLeave);
-    return () => {
-      window.removeEventListener('pointermove', onPointerMove);
-      document.documentElement.removeEventListener('pointerleave', onPointerLeave);
-      if (frame) window.cancelAnimationFrame(frame);
-    };
-  }, []);
-
-  return <div className="cursor-aura" aria-hidden="true" />;
-}
-
 function tiltCard(event) {
   if (event.pointerType !== 'mouse') return;
   const card = event.currentTarget;
@@ -1110,7 +1169,7 @@ export default function App() {
   return (
     <>
       <div className="scroll-progress" aria-hidden="true" />
-      <CursorAura />
+      <CursorTubes />
       <Header />
       <main>
         <Hero />
