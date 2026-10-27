@@ -410,6 +410,8 @@ function Projects() {
           <article
             className={`project-card reveal ${index === 0 ? 'project-featured' : ''}`}
             key={project.number}
+            onPointerMove={tiltCard}
+            onPointerLeave={resetCardTilt}
           >
             <ProjectVisual type={project.visual} number={project.number} />
             <div className="project-copy">
@@ -462,7 +464,12 @@ function Capabilities() {
       </div>
       <div className="capability-grid">
         {capabilities.map((item) => (
-          <article className="capability-card reveal" key={item.number}>
+          <article
+            className="capability-card reveal"
+            key={item.number}
+            onPointerMove={tiltCard}
+            onPointerLeave={resetCardTilt}
+          >
             <div className="capability-top">
               <span>{item.number}</span>
               <b>{item.icon}</b>
@@ -502,7 +509,12 @@ function Process() {
       </div>
       <div className="process-list">
         {steps.map(([number, title, copy]) => (
-          <article className="process-step reveal" key={number}>
+          <article
+            className="process-step reveal"
+            key={number}
+            onPointerMove={tiltCard}
+            onPointerLeave={resetCardTilt}
+          >
             <span>{number}</span>
             <h3>{title}</h3>
             <p>{copy}</p>
@@ -705,6 +717,57 @@ function Contact() {
   );
 }
 
+function CursorAura() {
+  useEffect(() => {
+    const aura = document.querySelector('.cursor-aura');
+    const canHover = window.matchMedia('(hover: hover) and (pointer: fine)');
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+    if (!aura || !canHover.matches || reduceMotion.matches) return undefined;
+
+    let frame = 0;
+    let pointer = null;
+    const update = () => {
+      frame = 0;
+      if (!pointer) return;
+      aura.style.left = `${pointer.x}px`;
+      aura.style.top = `${pointer.y}px`;
+      const target = document.elementFromPoint(pointer.x, pointer.y);
+      aura.classList.toggle(
+        'is-active',
+        Boolean(target?.closest('.project-card, .process-step, .capability-card, .button')),
+      );
+    };
+    const onPointerMove = (event) => {
+      pointer = { x: event.clientX, y: event.clientY };
+      if (!frame) frame = window.requestAnimationFrame(update);
+    };
+    const onPointerLeave = () => aura.classList.remove('is-active');
+
+    window.addEventListener('pointermove', onPointerMove, { passive: true });
+    document.documentElement.addEventListener('pointerleave', onPointerLeave);
+    return () => {
+      window.removeEventListener('pointermove', onPointerMove);
+      document.documentElement.removeEventListener('pointerleave', onPointerLeave);
+      if (frame) window.cancelAnimationFrame(frame);
+    };
+  }, []);
+
+  return <div className="cursor-aura" aria-hidden="true" />;
+}
+
+function tiltCard(event) {
+  if (event.pointerType !== 'mouse') return;
+  const card = event.currentTarget;
+  const bounds = card.getBoundingClientRect();
+  const x = (event.clientX - bounds.left) / bounds.width - 0.5;
+  const y = (event.clientY - bounds.top) / bounds.height - 0.5;
+  card.style.transform = `perspective(900px) rotateX(${(-y * 3).toFixed(2)}deg) rotateY(${(x * 3).toFixed(2)}deg) translateY(-4px)`;
+}
+
+function resetCardTilt(event) {
+  event.currentTarget.style.transform = '';
+}
+
 export default function App() {
   useEffect(() => {
     if (!('IntersectionObserver' in window)) {
@@ -728,6 +791,7 @@ export default function App() {
   return (
     <>
       <div className="scroll-progress" aria-hidden="true" />
+      <CursorAura />
       <Header />
       <main>
         <Hero />
