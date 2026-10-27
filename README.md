@@ -1,6 +1,6 @@
 # Thushan Gamage — DevOps Portfolio
 
-An end-to-end delivery project for a personal portfolio app. The site is intentionally framework-free; the engineering showcase is the path from a reviewed change to a monitored Kubernetes release.
+An end-to-end delivery project for a personal portfolio app built with React and Vite, served locally and in containers by Express, and deployable as a static site on Vercel. The engineering showcase is the path from a reviewed change to a monitored Kubernetes release.
 
 ## Architecture
 
@@ -19,7 +19,7 @@ flowchart LR
 
 ## Project layout
 
-- `app/` — Express app, portfolio site, tests, and hardened multi-stage Dockerfile
+- `app/` — React/Vite portfolio, Express health and metrics endpoints, tests, and hardened multi-stage Dockerfile
 - `infra/` — Terraform state bootstrap and AWS modules
 - `k8s/helm/portfolio/` — Kubernetes chart with probes, resources, Ingress, PDB, and optional HPA
 - `monitoring/` — Prometheus values, alert rules, and Grafana dashboard
@@ -28,17 +28,17 @@ flowchart LR
 
 ## Local development
 
-Requirements: Node.js 24 LTS, npm, Docker, Terraform, Helm, and Make.
+Requirements: Node.js 24, npm, Docker, Terraform, Helm, and Make. The React portfolio and Express service only need Node.js and npm for local development.
 
 ```sh
 make install
-make test
-make lint
-make build
-make run
+cd app
+npm run dev
 ```
 
-The app listens on `http://localhost:3000`. Check `/health` and `/metrics`.
+Vite serves the React site at `http://localhost:5173`. To run the production Express server locally, build the front end first with `npm run build`, then run `npm start` from `app/`; the app listens on `http://localhost:3000`. Check `/health` and `/metrics` there.
+
+`npm test` builds the front end before running the Express tests. To deploy the portfolio to Vercel, import this repository with its root directory set to the repository root; `vercel.json` installs the `app/` dependencies, builds Vite, and publishes `app/dist`. The Vercel static deployment serves the portfolio and résumé. The `/health` and `/metrics` endpoints are provided by the Express deployment (local/Docker/Render).
 
 ### Windows and Docker Desktop
 
@@ -49,8 +49,7 @@ If `make` is unavailable in PowerShell, run the matching commands directly from 
 ```powershell
 Set-Location app
 npm ci
-npm test
-npm run lint
+npm run dev
 Set-Location ..
 docker build -f app/Dockerfile -t devops-portfolio:local .
 docker run --rm -p 3000:3000 devops-portfolio:local

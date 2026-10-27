@@ -59,8 +59,9 @@ app.use((req, res, next) => {
 });
 
 const publicDir = path.join(__dirname, '..', 'public');
+const buildDir = path.join(__dirname, '..', 'dist');
 app.get('/', (_req, res) => {
-  const page = fs.readFileSync(path.join(publicDir, 'index.html'), 'utf8');
+  const page = fs.readFileSync(path.join(buildDir, 'index.html'), 'utf8');
   res
     .type('html')
     .send(
@@ -78,7 +79,7 @@ app.get('/metrics', async (_req, res, next) => {
     next(error);
   }
 });
-app.use(express.static(publicDir, { index: false, fallthrough: true, maxAge: '1h' }));
+app.use(express.static(buildDir, { index: false, fallthrough: true, maxAge: '1h' }));
 app.use((_req, res) => res.status(404).type('html').sendFile(path.join(publicDir, '404.html')));
 app.use((error, _req, res, _next) => {
   console.error('Request failed:', error.message);

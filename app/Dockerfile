@@ -5,8 +5,11 @@ FROM base AS dependencies
 COPY app/package*.json ./
 RUN npm ci
 
-FROM dependencies AS test
+FROM dependencies AS build
 COPY app/ ./
+RUN npm run build
+
+FROM build AS test
 RUN npm test && npm run lint
 
 FROM base AS production-dependencies
@@ -25,7 +28,7 @@ LABEL org.opencontainers.image.title="DevOps Portfolio" \
 COPY --from=production-dependencies --chown=node:node /app/node_modules ./node_modules
 COPY --chown=node:node app/package.json ./package.json
 COPY --chown=node:node app/src ./src
-COPY --chown=node:node app/public ./public
+COPY --from=build --chown=node:node /app/dist ./dist
 USER node
 EXPOSE 3000
 HEALTHCHECK --interval=30s --timeout=3s --start-period=10s --retries=3 \

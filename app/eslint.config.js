@@ -1,7 +1,7 @@
 const js = require('@eslint/js');
 
 module.exports = [
-  { ignores: ['coverage/**', 'node_modules/**'] },
+  { ignores: ['coverage/**', 'dist/**', 'node_modules/**'] },
   js.configs.recommended,
   {
     files: ['**/*.js'],
@@ -22,6 +22,14 @@ module.exports = [
     rules: { 'no-unused-vars': ['error', { argsIgnorePattern: '^_' }] },
   },
   {
+    files: ['vite.config.mjs'],
+    languageOptions: {
+      ecmaVersion: 'latest',
+      sourceType: 'module',
+      globals: { process: 'readonly' },
+    },
+  },
+  {
     files: ['tests/**/*.js'],
     languageOptions: {
       globals: {
@@ -33,9 +41,26 @@ module.exports = [
     },
   },
   {
-    files: ['public/**/*.js'],
+    files: ['frontend/src/**/*.{js,jsx}'],
     languageOptions: {
-      globals: { document: 'readonly', localStorage: 'readonly' },
+      ecmaVersion: 'latest',
+      sourceType: 'module',
+      parserOptions: { ecmaFeatures: { jsx: true } },
+      globals: {
+        document: 'readonly',
+        window: 'readonly',
+        localStorage: 'readonly',
+        IntersectionObserver: 'readonly',
+        setTimeout: 'readonly',
+        clearTimeout: 'readonly',
+      },
+    },
+    rules: { 'no-unused-vars': ['error', { argsIgnorePattern: '^_' }] },
+  },
+  {
+    files: ['frontend/src/**/*.{js,jsx}'],
+    languageOptions: {
+      globals: { React: 'readonly' },
     },
   },
 ];

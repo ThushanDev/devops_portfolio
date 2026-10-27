@@ -23,6 +23,17 @@ describe('portfolio service', () => {
     const response = await request(app).get('/missing').expect(404);
     expect(response.text).toContain('Page not found');
   });
+  test('serves the portfolio portrait and résumé', async () => {
+    await request(app)
+      .get('/images/thushan-gamage.webp')
+      .expect(200)
+      .expect('Content-Type', /image\/webp/);
+    const response = await request(app)
+      .get('/resume.pdf')
+      .expect(200)
+      .expect('Content-Type', /application\/pdf/);
+    expect(response.body.subarray(0, 5).toString()).toBe('%PDF-');
+  });
   test('sets browser security headers', async () => {
     const response = await request(app).get('/health').expect(200);
     expect(response.headers['x-content-type-options']).toBe('nosniff');
