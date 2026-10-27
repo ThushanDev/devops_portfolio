@@ -11,6 +11,17 @@ const links = {
 const projects = [
   {
     number: '01',
+    title: 'DevOps Portfolio Platform',
+    category: 'DEVOPS · CI/CD · CLOUD NATIVE',
+    description:
+      'This portfolio is also my DevOps showcase: a React app with secure container builds, automated GitHub Actions checks, image scanning, SBOM and signing, plus optional Kubernetes, monitoring, and Terraform learning paths.',
+    tags: ['GitHub Actions', 'Docker', 'Trivy · SBOM', 'Kubernetes · Helm'],
+    visual: 'platform',
+    link: 'https://github.com/ThushanDev/devops_portfolio',
+    linkLabel: 'Explore the DevOps project',
+  },
+  {
+    number: '02',
     title: 'Node.js CI/CD Pipeline',
     category: 'DEVOPS · CLOUD · AUTOMATION',
     description:
@@ -21,7 +32,7 @@ const projects = [
     linkLabel: 'View repository',
   },
   {
-    number: '02',
+    number: '03',
     title: 'EduFix',
     category: 'ANDROID · EDUCATION',
     description:
@@ -32,7 +43,7 @@ const projects = [
     linkLabel: 'Explore on GitHub',
   },
   {
-    number: '03',
+    number: '04',
     title: 'FarmEase',
     category: 'PRODUCT DESIGN · AGRICULTURE',
     description:
@@ -43,7 +54,7 @@ const projects = [
     linkLabel: 'More projects',
   },
   {
-    number: '04',
+    number: '05',
     title: 'Parcel Delivery System',
     category: 'JAVA · ALGORITHMS',
     description:
@@ -54,7 +65,7 @@ const projects = [
     linkLabel: 'More projects',
   },
   {
-    number: '05',
+    number: '06',
     title: 'Bill Sync',
     category: 'PRODUCT DESIGN · FINTECH',
     description:
@@ -65,7 +76,7 @@ const projects = [
     linkLabel: 'More projects',
   },
   {
-    number: '06',
+    number: '07',
     title: 'Student Management System',
     category: 'JAVA · OBJECT-ORIENTED DESIGN',
     description:
@@ -76,7 +87,7 @@ const projects = [
     linkLabel: 'More projects',
   },
   {
-    number: '07',
+    number: '08',
     title: 'Digital Wallet',
     category: 'JAVA · OBJECT-ORIENTED DESIGN',
     description:
@@ -91,36 +102,38 @@ const projects = [
 const capabilities = [
   {
     number: '01',
-    title: 'Web development',
-    description: 'PHP, MySQL, REST APIs, responsive interfaces, and Node.js fundamentals.',
-    icon: '</>',
-  },
-  {
-    number: '02',
-    title: 'Mobile applications',
+    title: 'DevOps & cloud delivery',
     description:
-      'Android development with Java, Android SDK, Gradle, and lifecycle-aware patterns.',
-    icon: '◫',
-  },
-  {
-    number: '03',
-    title: 'DevOps & cloud',
-    description: 'Docker, CI/CD pipelines, GitHub Actions, AWS EC2, Linux, and SSH.',
+      'CI/CD, secure Docker images, Linux, AWS EC2, GitHub Actions, and Kubernetes learning projects.',
     icon: '⌘',
   },
   {
-    number: '04',
+    number: '02',
     title: 'Security foundations',
     description:
       'Ethical hacking, penetration testing, vulnerability assessment, and network security.',
     icon: '↗',
   },
+  {
+    number: '03',
+    title: 'Web development',
+    description: 'PHP, MySQL, REST APIs, responsive interfaces, and Node.js fundamentals.',
+    icon: '</>',
+  },
+  {
+    number: '04',
+    title: 'Mobile applications',
+    description:
+      'Android development with Java, Android SDK, Gradle, and lifecycle-aware patterns.',
+    icon: '◫',
+  },
 ];
 
 const skills = [
+  ['DevOps & cloud', 'Linux', 'Docker', 'Docker Compose', 'GitHub Actions', 'AWS EC2', 'Nginx'],
+  ['Infrastructure learning path', 'Terraform', 'Kubernetes · Helm', 'Prometheus · Grafana'],
   ['Languages', 'PHP', 'Java', 'JavaScript', 'Python', 'Kotlin', 'Bash', 'SQL'],
   ['Web', 'MySQL', 'REST APIs', 'HTML5', 'CSS3', 'Node.js', 'Responsive design'],
-  ['Cloud & delivery', 'Docker', 'Docker Compose', 'GitHub Actions', 'AWS EC2', 'Nginx', 'Linux'],
   [
     'Security foundations',
     'Ethical hacking',
@@ -282,16 +295,17 @@ function Hero() {
     <section className="hero section-wrap" id="top">
       <div className="hero-copy">
         <p className="eyebrow">
-          <span className="status-dot" /> SOFTWARE ENGINEERING · PRODUCT · DEVOPS
+          <span className="status-dot" /> ASPIRING DEVOPS ENGINEER · CLOUD · AUTOMATION
         </p>
         <h1>
-          Build it.
+          Automate delivery.
           <br />
-          Automate it. <em>Ship it.</em>
+          Build for <em>reliability.</em>
         </h1>
         <p className="hero-summary">
-          I’m Thushan Gamage, a Software Engineering undergraduate focused on DevOps, cloud
-          automation, and building dependable software from code to deployment.
+          I’m Thushan Gamage, a Software Engineering undergraduate building my career in DevOps —
+          automating delivery, learning cloud infrastructure, and making software easier to ship
+          reliably.
         </p>
         <div className="hero-actions">
           <a className="button button-primary" href="#work">
@@ -302,8 +316,8 @@ function Hero() {
           </a>
         </div>
         <div className="hero-footnote">
-          <span>DEVOPS · CLOUD · SOFTWARE ENGINEERING</span>
-          <span>LEARNING BY BUILDING · OUSL</span>
+          <span>CI/CD · CONTAINERS · CLOUD</span>
+          <span>SOFTWARE ENGINEERING UNDERGRADUATE · OUSL</span>
         </div>
       </div>
       <div className="hero-portrait-wrap" aria-label="Portrait of Thushan Gamage">
@@ -316,14 +330,14 @@ function Hero() {
           </div>
         </div>
         <div className="orbit-note">
-          <span>✳</span> DESIGN · DEVELOP · DELIVER
+          <span>✳</span> AUTOMATE · SHIP · OBSERVE
         </div>
         <div className="floating-stamp">
           <span>OPEN TO</span>
           <b>
-            new
+            DevOps
             <br />
-            ideas
+            roles
           </b>
         </div>
       </div>
@@ -337,9 +351,9 @@ function Hero() {
 
 function ProofStrip() {
   const proof = [
-    ['07', 'selected projects'],
-    ['2+', 'EduFix releases'],
-    ['2024', 'engineering student'],
+    ['08', 'selected projects'],
+    ['02', 'DevOps showcases'],
+    ['2024', 'BSE undergraduate'],
   ];
   return (
     <section className="proof-strip section-wrap" aria-label="Portfolio highlights">
@@ -374,6 +388,20 @@ function ProjectVisual({ type, number }) {
           <i>→</i>
           <span>SHIP</span>
           <b>✓</b>
+        </div>
+      )}
+      {type === 'platform' && (
+        <div className="platform-art">
+          <span>
+            COMMIT <i>→</i> VERIFY
+          </span>
+          <b>
+            BUILD <em>·</em> SCAN <em>·</em> SIGN
+          </b>
+          <span>
+            CONTAINER <i>→</i> RELEASE
+          </span>
+          <small>OPTIONAL K8S · OBSERVABILITY</small>
         </div>
       )}
       {type === 'edufix' && (
@@ -451,7 +479,7 @@ function ProjectVisual({ type, number }) {
           <i>GRADING · RESEARCH SCORING</i>
         </div>
       )}
-      <span className="visual-index">{number} / 07</span>
+      <span className="visual-index">{number} / 08</span>
       <span className="visual-cross">✳</span>
     </div>
   );
@@ -464,14 +492,14 @@ function Projects() {
         <div>
           <p className="eyebrow">SELECTED WORK</p>
           <h2>
-            Ideas made
+            DevOps work,
             <br />
-            <em>real and useful.</em>
+            <em>built in public.</em>
           </h2>
         </div>
         <p className="section-intro">
-          A mix of software projects and product concepts — each one a chance to solve a problem and
-          learn by building.
+          CI/CD, container delivery, cloud infrastructure, and software projects that show how I’m
+          building toward a DevOps career.
         </p>
       </div>
       <div className="project-grid">
@@ -521,14 +549,14 @@ function Capabilities() {
         <div>
           <p className="eyebrow">WHAT I BRING</p>
           <h2>
-            Curiosity across
+            Reliable delivery
             <br />
-            <em>the whole stack.</em>
+            <em>from code to cloud.</em>
           </h2>
         </div>
         <p className="section-intro">
-          I enjoy moving between product thinking and implementation — from shaping an interface to
-          getting an app ready to ship.
+          My focus is DevOps: automating the path from a code change to a secure, observable
+          release. Software and product work give me context for the systems I help deliver.
         </p>
       </div>
       <div className="capability-grid">
@@ -617,9 +645,10 @@ function About() {
             useful products and the craft behind them.
           </p>
           <p>
-            My experience spans PHP and MySQL web applications, Android development, UI/UX concepts,
-            and cloud delivery with Docker, GitHub Actions, and AWS EC2. I’m building strong
-            foundations in software design, DevOps, and practical security.
+            My career direction is DevOps. I’ve built CI/CD pipelines with GitHub Actions, Docker,
+            and AWS EC2, and developed this portfolio repository as a broader DevOps project with
+            secure container delivery and optional infrastructure-as-code, Kubernetes, and
+            monitoring labs. I’m growing those infrastructure skills through hands-on practice.
           </p>
           <p>
             Outside project work, I contribute to engineering student communities, help coordinate
@@ -879,8 +908,8 @@ export default function App() {
           <div className="ticker-track">
             {Array.from({ length: 2 }).map((_, index) => (
               <span key={index}>
-                WEB DEVELOPMENT <i>✳</i> MOBILE APPS <i>✳</i> CLOUD &amp; DEVOPS <i>✳</i> PRODUCT
-                THINKING <i>✳</i>
+                DEVOPS &amp; CI/CD <i>✳</i> CLOUD INFRASTRUCTURE <i>✳</i> CONTAINERS <i>✳</i>
+                OBSERVABILITY <i>✳</i> SOFTWARE ENGINEERING <i>✳</i>
               </span>
             ))}
           </div>
