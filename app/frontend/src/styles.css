@@ -3444,3 +3444,24 @@ body {
     right: -3%;
   }
 }
+
+.hero-tubes {
+  position: absolute;
+  z-index: 0;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  opacity: 0.84;
+  pointer-events: none;
+  mix-blend-mode: screen;
+}
+.hero-portrait-wrap,
+.scroll-cue {
+  z-index: 1;
+}
+@media (prefers-reduced-motion: reduce) {
+  .hero-tubes {
+    display: none;
+  }
+}

@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 const links = {
   github: 'https://github.com/ThushanDev',
@@ -325,6 +325,7 @@ function Hero() {
   }, []);
   return (
     <section className="hero section-wrap" id="top">
+      <CursorTubes />
       <div className="hero-copy">
         <p className="eyebrow">
           <span className="status-dot" /> ASPIRING DEVOPS ENGINEER · CLOUD · AUTOMATION
@@ -880,6 +881,147 @@ function Contact() {
       </div>
     </footer>
   );
+}
+
+function CursorTubes() {
+  const canvasRef = useRef(null);
+
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    const stage = canvas?.parentElement;
+    const context = canvas?.getContext('2d');
+    const supportsPointer = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (!canvas || !stage || !context || !supportsPointer || prefersReducedMotion) return undefined;
+
+    const palette = ['#f967fb', '#c6fb72', '#6958d5'];
+    const points = [];
+    const pixelRatio = Math.min(window.devicePixelRatio || 1, 2);
+    let animationFrame = 0;
+
+    const resize = () => {
+      const bounds = stage.getBoundingClientRect();
+      canvas.width = Math.round(bounds.width * pixelRatio);
+      canvas.height = Math.round(bounds.height * pixelRatio);
+      context.setTransform(pixelRatio, 0, 0, pixelRatio, 0, 0);
+    };
+
+    const drawTube = (now, band, color, fade) => {
+      context.beginPath();
+      const offsetPoint = (index) => {
+        const previous = points[Math.max(0, index - 1)];
+        const next = points[Math.min(points.length - 1, index + 1)];
+        const dx = next.x - previous.x;
+        const dy = next.y - previous.y;
+        const length = Math.hypot(dx, dy) || 1;
+        const wave = Math.sin(now * 0.002 + index * 0.22 + band * 2.1) * 5;
+        const distance = (band - 1) * 9 + wave;
+        return {
+          x: points[index].x - (dy / length) * distance,
+          y: points[index].y + (dx / length) * distance,
+        };
+      };
+      const first = offsetPoint(0);
+      context.moveTo(first.x, first.y);
+      for (let index = 1; index < points.length - 1; index += 1) {
+        const current = offsetPoint(index);
+        const next = offsetPoint(index + 1);
+        context.quadraticCurveTo(
+          current.x,
+          current.y,
+          (current.x + next.x) / 2,
+          (current.y + next.y) / 2,
+        );
+      }
+      const last = offsetPoint(points.length - 1);
+      context.lineTo(last.x, last.y);
+      context.lineCap = 'round';
+      context.lineJoin = 'round';
+      context.globalAlpha = fade;
+      context.shadowColor = color;
+      context.shadowBlur = 24;
+      context.strokeStyle = 'rgba(7, 9, 10, 0.72)';
+      context.lineWidth = 14;
+      context.stroke();
+      context.shadowBlur = 18;
+      context.strokeStyle = color;
+      context.lineWidth = 8;
+      context.stroke();
+      context.shadowBlur = 0;
+      context.strokeStyle = 'rgba(255, 255, 255, 0.76)';
+      context.lineWidth = 1.5;
+      context.stroke();
+      context.globalAlpha = 1;
+    };
+
+    const render = (now) => {
+      animationFrame = 0;
+      const bounds = stage.getBoundingClientRect();
+      context.clearRect(0, 0, bounds.width, bounds.height);
+      while (points.length && now - points[0].time > 1050) points.shift();
+
+      if (points.length > 1) {
+        const fade = Math.max(0, 1 - (now - points[points.length - 1].time) / 1050);
+        palette.forEach((color, band) => drawTube(now, band, color, fade));
+        animationFrame = window.requestAnimationFrame(render);
+      }
+    };
+
+    const scheduleRender = () => {
+      if (!animationFrame) animationFrame = window.requestAnimationFrame(render);
+    };
+
+    const onPointerMove = (event) => {
+      if (event.pointerType !== 'mouse') return;
+      const bounds = stage.getBoundingClientRect();
+      const point = {
+        x: event.clientX - bounds.left,
+        y: event.clientY - bounds.top,
+        time: window.performance.now(),
+      };
+      const previous = points[points.length - 1];
+      if (!previous || Math.hypot(point.x - previous.x, point.y - previous.y) > 3) {
+        points.push(point);
+        if (points.length > 34) points.shift();
+      }
+      scheduleRender();
+    };
+
+    const onPointerLeave = () => {
+      points.length = 0;
+      if (animationFrame) window.cancelAnimationFrame(animationFrame);
+      animationFrame = 0;
+      const bounds = stage.getBoundingClientRect();
+      context.clearRect(0, 0, bounds.width, bounds.height);
+    };
+
+    const randomColor = () =>
+      `#${Math.floor(Math.random() * 0xffffff)
+        .toString(16)
+        .padStart(6, '0')}`;
+    const onClick = () => {
+      palette.forEach((_, index) => {
+        palette[index] = randomColor();
+      });
+      scheduleRender();
+    };
+
+    resize();
+    stage.addEventListener('pointermove', onPointerMove, { passive: true });
+    stage.addEventListener('pointerleave', onPointerLeave);
+    stage.addEventListener('click', onClick);
+    window.addEventListener('resize', resize, { passive: true });
+
+    return () => {
+      stage.removeEventListener('pointermove', onPointerMove);
+      stage.removeEventListener('pointerleave', onPointerLeave);
+      stage.removeEventListener('click', onClick);
+      window.removeEventListener('resize', resize);
+      if (animationFrame) window.cancelAnimationFrame(animationFrame);
+    };
+  }, []);
+
+  return <canvas ref={canvasRef} className="hero-tubes" aria-hidden="true" />;
 }
 
 function CursorAura() {
