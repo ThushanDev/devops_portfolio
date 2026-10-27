@@ -1513,6 +1513,204 @@ h2 em {
   }
 }
 
+/* DevOps-led hero with a cursor-reactive portrait depth effect. */
+.hero {
+  position: relative;
+  min-height: 0;
+  padding-bottom: 35px;
+  overflow: hidden;
+}
+
+.hero h1 em {
+  color: var(--lime);
+}
+
+.hero-portrait-wrap {
+  --pointer-x: 50%;
+  --pointer-y: 50%;
+  --portrait-rotate-x: 0deg;
+  --portrait-rotate-y: 0deg;
+  display: grid;
+  width: min(100%, 760px);
+  min-height: 350px;
+  margin: 13px auto 0;
+  perspective: 1000px;
+  transform-style: preserve-3d;
+}
+
+.portrait-glow {
+  width: min(62vw, 460px);
+  background: radial-gradient(
+    circle,
+    rgba(183, 243, 75, 0.17),
+    rgba(183, 243, 75, 0.055) 42%,
+    transparent 72%
+  );
+  transform: translate3d(0, 0, -35px) scale(1.05);
+}
+
+.portrait-frame {
+  width: min(44vw, 310px);
+  min-width: 220px;
+  aspect-ratio: 0.92;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 46% 46% 18px 18px;
+  box-shadow:
+    0 35px 90px rgba(0, 0, 0, 0.48),
+    0 0 70px rgba(183, 243, 75, 0.08);
+  transform: rotateX(var(--portrait-rotate-x)) rotateY(var(--portrait-rotate-y)) rotateZ(1.5deg);
+  transform-style: preserve-3d;
+  transition:
+    transform 0.22s ease-out,
+    box-shadow 0.4s ease;
+  will-change: transform;
+}
+
+.portrait-frame::before {
+  position: absolute;
+  z-index: 2;
+  inset: 0;
+  content: '';
+  pointer-events: none;
+  background: radial-gradient(
+    circle at var(--pointer-x) var(--pointer-y),
+    rgba(255, 255, 255, 0.2),
+    transparent 35%
+  );
+  mix-blend-mode: screen;
+}
+
+.portrait-frame img {
+  transform: translateZ(20px) scale(1.04);
+  transition: transform 0.35s ease-out;
+}
+
+.hero-portrait-wrap:hover .portrait-frame img {
+  transform: translateZ(28px) scale(1.07);
+}
+.portrait-caption {
+  transform: translateZ(36px);
+}
+
+.orbit-note {
+  top: 21%;
+  right: 11%;
+  padding: 11px 14px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: rgba(18, 18, 18, 0.82);
+  backdrop-filter: blur(10px);
+  animation: orbit-drift 5s ease-in-out infinite;
+}
+
+.floating-stamp {
+  top: 34%;
+  right: 14%;
+  bottom: auto;
+  width: 92px;
+  height: 92px;
+  border: 1px solid rgba(183, 243, 75, 0.32);
+  background: rgba(18, 18, 18, 0.9);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.3);
+}
+
+@keyframes orbit-drift {
+  0%,
+  100% {
+    translate: 0 0;
+  }
+  50% {
+    translate: 0 -8px;
+  }
+}
+
+.credentials {
+  align-items: flex-start;
+}
+.credential-list {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+}
+.credential-list .certificate-card {
+  display: grid;
+  min-height: 142px;
+  align-content: start;
+  gap: 8px;
+  padding: 16px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: rgba(12, 12, 12, 0.55);
+  transition:
+    transform 0.3s ease,
+    border-color 0.3s ease,
+    background 0.3s ease;
+}
+.certificate-card:hover {
+  transform: translateY(-4px);
+  border-color: rgba(183, 243, 75, 0.3);
+  background: #191b16;
+}
+.certificate-seal {
+  color: var(--lime);
+  font-size: 1.1rem;
+}
+.certificate-card small,
+.certificate-card > span:last-child {
+  color: var(--quiet);
+  font-family: var(--mono);
+  font-size: 0.58rem;
+  letter-spacing: 0.04em;
+}
+.certificate-card b {
+  color: var(--ink);
+  font-size: 0.82rem;
+  line-height: 1.35;
+}
+
+@media (max-width: 700px) {
+  .hero {
+    padding-top: 58px;
+    padding-bottom: 28px;
+  }
+  .hero-portrait-wrap {
+    min-height: 300px;
+    margin-top: 5px;
+  }
+  .portrait-frame {
+    width: min(62vw, 265px);
+    min-width: 0;
+  }
+  .orbit-note {
+    top: 20%;
+    right: 0;
+    max-width: 155px;
+  }
+  .floating-stamp {
+    top: 35%;
+    right: 1%;
+    width: 76px;
+    height: 76px;
+  }
+  .credential-list {
+    grid-template-columns: 1fr;
+  }
+  .certificate-card {
+    min-height: 0 !important;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-portrait-wrap,
+  .portrait-frame,
+  .portrait-glow,
+  .orbit-note,
+  .floating-stamp {
+    animation: none !important;
+    transition: none !important;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
@@ -2667,5 +2865,203 @@ body {
 
   .contact-section {
     margin-bottom: 12px;
+  }
+}
+
+/* DevOps-led hero with a cursor-reactive portrait depth effect. */
+.hero {
+  position: relative;
+  min-height: 0;
+  padding-bottom: 35px;
+  overflow: hidden;
+}
+
+.hero h1 em {
+  color: var(--lime);
+}
+
+.hero-portrait-wrap {
+  --pointer-x: 50%;
+  --pointer-y: 50%;
+  --portrait-rotate-x: 0deg;
+  --portrait-rotate-y: 0deg;
+  display: grid;
+  width: min(100%, 760px);
+  min-height: 350px;
+  margin: 13px auto 0;
+  perspective: 1000px;
+  transform-style: preserve-3d;
+}
+
+.portrait-glow {
+  width: min(62vw, 460px);
+  background: radial-gradient(
+    circle,
+    rgba(183, 243, 75, 0.17),
+    rgba(183, 243, 75, 0.055) 42%,
+    transparent 72%
+  );
+  transform: translate3d(0, 0, -35px) scale(1.05);
+}
+
+.portrait-frame {
+  width: min(44vw, 310px);
+  min-width: 220px;
+  aspect-ratio: 0.92;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 46% 46% 18px 18px;
+  box-shadow:
+    0 35px 90px rgba(0, 0, 0, 0.48),
+    0 0 70px rgba(183, 243, 75, 0.08);
+  transform: rotateX(var(--portrait-rotate-x)) rotateY(var(--portrait-rotate-y)) rotateZ(1.5deg);
+  transform-style: preserve-3d;
+  transition:
+    transform 0.22s ease-out,
+    box-shadow 0.4s ease;
+  will-change: transform;
+}
+
+.portrait-frame::before {
+  position: absolute;
+  z-index: 2;
+  inset: 0;
+  content: '';
+  pointer-events: none;
+  background: radial-gradient(
+    circle at var(--pointer-x) var(--pointer-y),
+    rgba(255, 255, 255, 0.2),
+    transparent 35%
+  );
+  mix-blend-mode: screen;
+}
+
+.portrait-frame img {
+  transform: translateZ(20px) scale(1.04);
+  transition: transform 0.35s ease-out;
+}
+
+.hero-portrait-wrap:hover .portrait-frame img {
+  transform: translateZ(28px) scale(1.07);
+}
+.portrait-caption {
+  transform: translateZ(36px);
+}
+
+.orbit-note {
+  top: 21%;
+  right: 11%;
+  padding: 11px 14px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: rgba(18, 18, 18, 0.82);
+  backdrop-filter: blur(10px);
+  animation: orbit-drift 5s ease-in-out infinite;
+}
+
+.floating-stamp {
+  top: 34%;
+  right: 14%;
+  bottom: auto;
+  width: 92px;
+  height: 92px;
+  border: 1px solid rgba(183, 243, 75, 0.32);
+  background: rgba(18, 18, 18, 0.9);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.3);
+}
+
+@keyframes orbit-drift {
+  0%,
+  100% {
+    translate: 0 0;
+  }
+  50% {
+    translate: 0 -8px;
+  }
+}
+
+.credentials {
+  align-items: flex-start;
+}
+.credential-list {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+}
+.credential-list .certificate-card {
+  display: grid;
+  min-height: 142px;
+  align-content: start;
+  gap: 8px;
+  padding: 16px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: rgba(12, 12, 12, 0.55);
+  transition:
+    transform 0.3s ease,
+    border-color 0.3s ease,
+    background 0.3s ease;
+}
+.certificate-card:hover {
+  transform: translateY(-4px);
+  border-color: rgba(183, 243, 75, 0.3);
+  background: #191b16;
+}
+.certificate-seal {
+  color: var(--lime);
+  font-size: 1.1rem;
+}
+.certificate-card small,
+.certificate-card > span:last-child {
+  color: var(--quiet);
+  font-family: var(--mono);
+  font-size: 0.58rem;
+  letter-spacing: 0.04em;
+}
+.certificate-card b {
+  color: var(--ink);
+  font-size: 0.82rem;
+  line-height: 1.35;
+}
+
+@media (max-width: 700px) {
+  .hero {
+    padding-top: 58px;
+    padding-bottom: 28px;
+  }
+  .hero-portrait-wrap {
+    min-height: 300px;
+    margin-top: 5px;
+  }
+  .portrait-frame {
+    width: min(62vw, 265px);
+    min-width: 0;
+  }
+  .orbit-note {
+    top: 20%;
+    right: 0;
+    max-width: 155px;
+  }
+  .floating-stamp {
+    top: 35%;
+    right: 1%;
+    width: 76px;
+    height: 76px;
+  }
+  .credential-list {
+    grid-template-columns: 1fr;
+  }
+  .certificate-card {
+    min-height: 0 !important;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-portrait-wrap,
+  .portrait-frame,
+  .portrait-glow,
+  .orbit-note,
+  .floating-stamp {
+    animation: none !important;
+    transition: none !important;
   }
 }

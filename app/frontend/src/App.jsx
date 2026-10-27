@@ -39,8 +39,8 @@ const projects = [
       'A mobile product concept that helps farmers monitor crops, manage farm activities, and access useful agricultural insights.',
     tags: ['Figma', 'UI/UX', 'Mobile design'],
     visual: 'farm',
-    link: null,
-    linkLabel: '',
+    link: links.github,
+    linkLabel: 'More projects',
   },
   {
     number: '04',
@@ -61,8 +61,8 @@ const projects = [
       'A personal finance app concept for tracking income, expenses, and budgets through clear visual summaries and everyday-friendly flows.',
     tags: ['Figma', 'UI/UX', 'Fintech'],
     visual: 'billsync',
-    link: null,
-    linkLabel: '',
+    link: links.github,
+    linkLabel: 'More projects',
   },
   {
     number: '06',
@@ -121,7 +121,23 @@ const skills = [
   ['Languages', 'PHP', 'Java', 'JavaScript', 'Python', 'Kotlin', 'Bash', 'SQL'],
   ['Web', 'MySQL', 'REST APIs', 'HTML5', 'CSS3', 'Node.js', 'Responsive design'],
   ['Cloud & delivery', 'Docker', 'Docker Compose', 'GitHub Actions', 'AWS EC2', 'Nginx', 'Linux'],
-  ['Tools', 'Git', 'GitHub', 'VS Code', 'IntelliJ IDEA', 'Figma', 'Photoshop'],
+  [
+    'Security foundations',
+    'Ethical hacking',
+    'Penetration testing',
+    'Vulnerability assessment',
+    'Metasploit',
+    'Wireshark',
+  ],
+  ['Tools', 'Git', 'GitHub', 'VS Code', 'IntelliJ IDEA', 'NetBeans', 'Figma'],
+];
+
+const certificates = [
+  ['Cisco Networking Academy', 'Ethical Hacker', 'July 2025'],
+  ['Cisco Networking Academy', 'Operating Systems Basics', 'July 2025'],
+  ['Oracle', 'Introduction to Oracle Cloud Essentials', 'June 2025'],
+  ['CoDeKu DevOps Academy', 'Docker Beginners Guide', 'Containerisation'],
+  ['University of Moratuwa', 'Web Design for Beginners', 'CODL'],
 ];
 
 function Arrow({ diagonal = false }) {
@@ -221,6 +237,47 @@ function Header() {
 }
 
 function Hero() {
+  useEffect(() => {
+    const stage = document.querySelector('.hero-portrait-wrap');
+    if (
+      !stage ||
+      !window.matchMedia('(hover: hover) and (pointer: fine)').matches ||
+      window.matchMedia('(prefers-reduced-motion: reduce)').matches
+    )
+      return undefined;
+    let frame = 0;
+    let point = null;
+    const move = (event) => {
+      const bounds = stage.getBoundingClientRect();
+      point = {
+        x: (event.clientX - bounds.left) / bounds.width,
+        y: (event.clientY - bounds.top) / bounds.height,
+      };
+      if (!frame)
+        frame = window.requestAnimationFrame(() => {
+          frame = 0;
+          if (!point) return;
+          stage.style.setProperty('--portrait-rotate-y', `${((point.x - 0.5) * 22).toFixed(2)}deg`);
+          stage.style.setProperty('--portrait-rotate-x', `${((0.5 - point.y) * 16).toFixed(2)}deg`);
+          stage.style.setProperty('--pointer-x', `${(point.x * 100).toFixed(1)}%`);
+          stage.style.setProperty('--pointer-y', `${(point.y * 100).toFixed(1)}%`);
+        });
+    };
+    const leave = () => {
+      point = null;
+      stage.style.setProperty('--portrait-rotate-y', '0deg');
+      stage.style.setProperty('--portrait-rotate-x', '0deg');
+      stage.style.setProperty('--pointer-x', '50%');
+      stage.style.setProperty('--pointer-y', '50%');
+    };
+    stage.addEventListener('pointermove', move, { passive: true });
+    stage.addEventListener('pointerleave', leave);
+    return () => {
+      stage.removeEventListener('pointermove', move);
+      stage.removeEventListener('pointerleave', leave);
+      if (frame) window.cancelAnimationFrame(frame);
+    };
+  }, []);
   return (
     <section className="hero section-wrap" id="top">
       <div className="hero-copy">
@@ -228,13 +285,13 @@ function Hero() {
           <span className="status-dot" /> SOFTWARE ENGINEERING · PRODUCT · DEVOPS
         </p>
         <h1>
-          Thoughtful software.
+          Build it.
           <br />
-          Reliable <em>delivery.</em>
+          Automate it. <em>Ship it.</em>
         </h1>
         <p className="hero-summary">
-          I’m Thushan Gamage, a software engineering undergraduate who designs, builds, and ships
-          useful digital products with care.
+          I’m Thushan Gamage, a Software Engineering undergraduate focused on DevOps, cloud
+          automation, and building dependable software from code to deployment.
         </p>
         <div className="hero-actions">
           <a className="button button-primary" href="#work">
@@ -245,8 +302,8 @@ function Hero() {
           </a>
         </div>
         <div className="hero-footnote">
-          <span>Software Engineering · OUSL</span>
-          <span>DESIGN · DEVELOP · DELIVER</span>
+          <span>DEVOPS · CLOUD · SOFTWARE ENGINEERING</span>
+          <span>LEARNING BY BUILDING · OUSL</span>
         </div>
       </div>
       <div className="hero-portrait-wrap" aria-label="Portrait of Thushan Gamage">
@@ -622,12 +679,18 @@ function Skills() {
       </div>
       <div className="credentials reveal">
         <div>
-          <p className="eyebrow">CURRENTLY LEARNING &amp; CERTIFIED IN</p>
+          <p className="eyebrow">CERTIFICATIONS &amp; PROFESSIONAL LEARNING</p>
           <div className="credential-list">
-            <span>Ethical Hacking Fundamentals</span>
-            <span>Docker Containerisation</span>
-            <span>Web Design for Beginners</span>
-            <span>Operating Systems Basics</span>
+            {certificates.map(([issuer, title, note]) => (
+              <article className="certificate-card" key={title}>
+                <span className="certificate-seal" aria-hidden="true">
+                  ✳
+                </span>
+                <small>{issuer}</small>
+                <b>{title}</b>
+                <span>{note}</span>
+              </article>
+            ))}
           </div>
         </div>
         <span className="credential-mark">✳</span>
