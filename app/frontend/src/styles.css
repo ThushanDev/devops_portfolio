@@ -2137,6 +2137,7 @@ body {
 .project-card,
 .project-featured {
   display: block;
+  grid-column: auto;
   overflow: hidden;
   padding: 0;
   border: 1px solid rgba(255, 255, 255, 0.075);
