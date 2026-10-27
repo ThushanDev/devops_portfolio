@@ -3408,19 +3408,136 @@ body {
   }
 }
 
-.cursor-tubes {
-  position: fixed;
-  z-index: 14;
+/* Landing-only DevOps workflow orbit around the portrait. */
+.devops-orbit {
+  position: absolute;
+  z-index: 1;
   inset: 0;
-  width: 100vw;
-  height: 100vh;
-  overflow: hidden;
-  opacity: 0.88;
+  display: grid;
+  place-items: center;
   pointer-events: none;
-  mix-blend-mode: screen;
 }
-@media (max-width: 620px), (prefers-reduced-motion: reduce) {
-  .cursor-tubes {
-    display: none;
+.orbit-ring {
+  position: absolute;
+  display: block;
+  width: min(100%, 520px);
+  aspect-ratio: 1;
+  border: 1px solid rgba(198, 251, 114, 0.16);
+  border-radius: 50%;
+  transform-style: preserve-3d;
+}
+.orbit-ring--outer {
+  border-left-color: rgba(255, 116, 92, 0.52);
+  border-right-color: rgba(198, 251, 114, 0.5);
+  animation: orbit-sweep 34s linear infinite;
+}
+.orbit-ring--inner {
+  width: min(84%, 430px);
+  border-color: rgba(255, 116, 92, 0.12);
+  border-top-color: rgba(255, 116, 92, 0.48);
+  border-bottom-color: rgba(198, 251, 114, 0.4);
+  animation: orbit-sweep-reverse 26s linear infinite;
+}
+.orbit-chip {
+  position: absolute;
+  z-index: 2;
+  display: inline-flex;
+  min-height: 38px;
+  align-items: center;
+  gap: 9px;
+  padding: 0 12px;
+  border: 1px solid rgba(240, 240, 233, 0.14);
+  border-radius: 999px;
+  color: #e9eae2;
+  background: rgba(16, 17, 16, 0.88);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+  font-family: var(--mono);
+  font-size: 0.55rem;
+  letter-spacing: 0.1em;
+  backdrop-filter: blur(10px);
+  animation: orbit-float 4.8s ease-in-out infinite;
+}
+.orbit-chip i {
+  display: grid;
+  width: 20px;
+  height: 20px;
+  place-items: center;
+  border-radius: 50%;
+  color: #111;
+  background: var(--lime);
+  font-size: 0.48rem;
+  font-style: normal;
+  letter-spacing: 0;
+}
+.orbit-chip--commit {
+  top: 19%;
+  left: 1%;
+}
+.orbit-chip--build {
+  top: 49%;
+  right: 0;
+  animation-delay: -1.6s;
+}
+.orbit-chip--ship {
+  bottom: 12%;
+  left: 13%;
+  animation-delay: -3.1s;
+}
+@keyframes orbit-sweep {
+  from {
+    transform: rotateX(68deg) rotateZ(0deg);
+  }
+  to {
+    transform: rotateX(68deg) rotateZ(360deg);
+  }
+}
+@keyframes orbit-sweep-reverse {
+  from {
+    transform: rotateY(67deg) rotateZ(0deg);
+  }
+  to {
+    transform: rotateY(67deg) rotateZ(-360deg);
+  }
+}
+@keyframes orbit-float {
+  0%,
+  100% {
+    translate: 0 0;
+  }
+  50% {
+    translate: 0 -7px;
+  }
+}
+.portrait-frame {
+  z-index: 2;
+}
+@media (max-width: 700px) {
+  .orbit-ring--outer {
+    width: min(100%, 430px);
+  }
+  .orbit-ring--inner {
+    width: min(82%, 350px);
+  }
+  .orbit-chip {
+    min-height: 34px;
+    padding-inline: 9px;
+    font-size: 0.48rem;
+  }
+  .orbit-chip--commit {
+    top: 16%;
+    left: 0;
+  }
+  .orbit-chip--build {
+    right: -1%;
+  }
+  .orbit-chip--ship {
+    bottom: 8%;
+    left: 6%;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .orbit-ring,
+  .orbit-chip {
+    animation: none !important;
   }
 }

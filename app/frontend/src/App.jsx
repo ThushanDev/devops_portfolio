@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 
 const links = {
   github: 'https://github.com/ThushanDev',
@@ -302,8 +302,8 @@ function Hero() {
         frame = window.requestAnimationFrame(() => {
           frame = 0;
           if (!point) return;
-          stage.style.setProperty('--portrait-rotate-y', `${((point.x - 0.5) * 22).toFixed(2)}deg`);
-          stage.style.setProperty('--portrait-rotate-x', `${((0.5 - point.y) * 16).toFixed(2)}deg`);
+          stage.style.setProperty('--portrait-rotate-y', `${((point.x - 0.5) * 10).toFixed(2)}deg`);
+          stage.style.setProperty('--portrait-rotate-x', `${((0.5 - point.y) * 8).toFixed(2)}deg`);
           stage.style.setProperty('--pointer-x', `${(point.x * 100).toFixed(1)}%`);
           stage.style.setProperty('--pointer-y', `${(point.y * 100).toFixed(1)}%`);
         });
@@ -354,6 +354,19 @@ function Hero() {
       </div>
       <div className="hero-portrait-wrap" aria-label="Portrait of Thushan Gamage">
         <div className="portrait-glow" />
+        <div className="devops-orbit" aria-hidden="true">
+          <span className="orbit-ring orbit-ring--outer" />
+          <span className="orbit-ring orbit-ring--inner" />
+          <span className="orbit-chip orbit-chip--commit">
+            <i>01</i> COMMIT
+          </span>
+          <span className="orbit-chip orbit-chip--build">
+            <i>02</i> BUILD
+          </span>
+          <span className="orbit-chip orbit-chip--ship">
+            <i>03</i> SHIP
+          </span>
+        </div>
         <div className="portrait-frame">
           <img src="/images/thushan-gamage.webp" alt="Thushan Gamage" fetchPriority="high" />
           <div className="portrait-caption">
@@ -882,245 +895,6 @@ function Contact() {
   );
 }
 
-function CursorTubes() {
-  const canvasRef = useRef(null);
-
-  useEffect(() => {
-    const canvas = canvasRef.current;
-    const context = canvas?.getContext('2d');
-    const supportsPointer = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
-    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    if (!canvas || !context || !supportsPointer || prefersReducedMotion) return undefined;
-
-    const palette = ['#f967fb', '#53bc28', '#6958d5'];
-    const points = [];
-    const bursts = [];
-    const pixelRatio = Math.min(window.devicePixelRatio || 1, 1.5);
-    let cursor = null;
-    let lastMoveAt = 0;
-    let animationFrame = 0;
-    let width = window.innerWidth;
-    let height = window.innerHeight;
-
-    const resize = () => {
-      width = window.innerWidth;
-      height = window.innerHeight;
-      canvas.width = Math.round(width * pixelRatio);
-      canvas.height = Math.round(height * pixelRatio);
-      context.setTransform(pixelRatio, 0, 0, pixelRatio, 0, 0);
-    };
-
-    const buildTrailPath = (now, band) => {
-      context.beginPath();
-      const sample = (index) => {
-        const previous = points[Math.max(0, index - 1)];
-        const next = points[Math.min(points.length - 1, index + 1)];
-        const dx = next.x - previous.x;
-        const dy = next.y - previous.y;
-        const length = Math.hypot(dx, dy) || 1;
-        const twist = Math.sin(now * 0.0025 + index * 0.26 + band * 2.1) * 9;
-        const offset = (band - 1) * 12 + twist;
-        return {
-          x: points[index].x - (dy / length) * offset,
-          y: points[index].y + (dx / length) * offset,
-        };
-      };
-
-      const first = sample(0);
-      context.moveTo(first.x, first.y);
-      for (let index = 1; index < points.length - 1; index += 1) {
-        const current = sample(index);
-        const next = sample(index + 1);
-        context.quadraticCurveTo(
-          current.x,
-          current.y,
-          (current.x + next.x) / 2,
-          (current.y + next.y) / 2,
-        );
-      }
-      const last = sample(points.length - 1);
-      context.lineTo(last.x, last.y);
-      context.lineCap = 'round';
-      context.lineJoin = 'round';
-      return { first, last };
-    };
-
-    const drawTrail = (now, fade) => {
-      palette.forEach((color, band) => {
-        const { first, last } = buildTrailPath(now, band);
-        context.save();
-        context.globalAlpha = fade;
-        context.shadowColor = color;
-        context.shadowBlur = 30;
-        context.strokeStyle = 'rgba(5, 7, 9, 0.74)';
-        context.lineWidth = 19;
-        context.stroke();
-        context.shadowBlur = 20;
-        context.strokeStyle = color;
-        context.lineWidth = 8;
-        context.stroke();
-        const highlight = context.createLinearGradient(first.x, first.y, last.x, last.y);
-        highlight.addColorStop(0, 'rgba(255, 255, 255, 0.08)');
-        highlight.addColorStop(0.7, 'rgba(255, 255, 255, 0.82)');
-        highlight.addColorStop(1, 'rgba(255, 255, 255, 0.25)');
-        context.shadowBlur = 0;
-        context.strokeStyle = highlight;
-        context.lineWidth = 1.6;
-        context.stroke();
-        context.restore();
-      });
-    };
-
-    const drawCursorCore = (now, fade) => {
-      if (!cursor) return;
-      context.save();
-      context.globalAlpha = fade;
-      palette.forEach((color, index) => {
-        const spin = now * (index % 2 ? -0.0018 : 0.0018) + index * 1.04;
-        context.beginPath();
-        context.ellipse(cursor.x, cursor.y, 19 + index * 5, 8 + index * 2.5, spin, 0, Math.PI * 2);
-        context.strokeStyle = color;
-        context.lineWidth = 1.7;
-        context.shadowColor = color;
-        context.shadowBlur = 15;
-        context.stroke();
-      });
-
-      for (let index = 0; index < 7; index += 1) {
-        const angle = now * 0.0022 + (index / 7) * Math.PI * 2;
-        const depth = Math.sin(angle);
-        const color = palette[index % palette.length];
-        context.beginPath();
-        context.arc(
-          cursor.x + Math.cos(angle) * (25 + depth * 3),
-          cursor.y + depth * 13,
-          1.4 + (depth + 1) * 0.8,
-          0,
-          Math.PI * 2,
-        );
-        context.fillStyle = color;
-        context.shadowColor = color;
-        context.shadowBlur = 12;
-        context.fill();
-      }
-
-      const core = context.createRadialGradient(cursor.x, cursor.y, 0, cursor.x, cursor.y, 13);
-      core.addColorStop(0, 'rgba(255, 255, 255, 0.9)');
-      core.addColorStop(0.24, 'rgba(255, 255, 255, 0.48)');
-      core.addColorStop(1, 'rgba(255, 255, 255, 0)');
-      context.beginPath();
-      context.arc(cursor.x, cursor.y, 13, 0, Math.PI * 2);
-      context.fillStyle = core;
-      context.fill();
-      context.restore();
-    };
-
-    const drawBursts = (now) => {
-      for (let index = bursts.length - 1; index >= 0; index -= 1) {
-        const burst = bursts[index];
-        const progress = (now - burst.time) / 620;
-        if (progress >= 1) {
-          bursts.splice(index, 1);
-          continue;
-        }
-        for (let spark = 0; spark < 18; spark += 1) {
-          const angle = (spark / 18) * Math.PI * 2 + burst.rotation;
-          const distance = progress * (28 + (spark % 4) * 8);
-          const color = palette[spark % palette.length];
-          context.globalAlpha = 1 - progress;
-          context.beginPath();
-          context.arc(
-            burst.x + Math.cos(angle) * distance,
-            burst.y + Math.sin(angle) * distance,
-            (1 - progress) * (1.5 + (spark % 3) * 0.7),
-            0,
-            Math.PI * 2,
-          );
-          context.fillStyle = color;
-          context.shadowColor = color;
-          context.shadowBlur = 13;
-          context.fill();
-        }
-      }
-      context.globalAlpha = 1;
-      context.shadowBlur = 0;
-    };
-
-    const render = (now) => {
-      animationFrame = 0;
-      context.clearRect(0, 0, width, height);
-      while (points.length && now - points[0].time > 1200) points.shift();
-      const idleFor = now - lastMoveAt;
-      const trailFade = Math.max(0, 1 - idleFor / 1050);
-      if (points.length > 1 && trailFade > 0) drawTrail(now, trailFade);
-      if (cursor && idleFor < 1350) drawCursorCore(now, Math.max(0, 1 - idleFor / 1350));
-      drawBursts(now);
-
-      if ((points.length > 1 && trailFade > 0) || (cursor && idleFor < 1350) || bursts.length) {
-        animationFrame = window.requestAnimationFrame(render);
-      }
-    };
-
-    const scheduleRender = () => {
-      if (!animationFrame) animationFrame = window.requestAnimationFrame(render);
-    };
-
-    const onPointerMove = (event) => {
-      if (event.pointerType !== 'mouse') return;
-      const point = { x: event.clientX, y: event.clientY, time: window.performance.now() };
-      cursor = point;
-      lastMoveAt = point.time;
-      const previous = points[points.length - 1];
-      if (!previous || Math.hypot(point.x - previous.x, point.y - previous.y) > 3) {
-        points.push(point);
-        if (points.length > 44) points.shift();
-      }
-      scheduleRender();
-    };
-
-    const onPointerLeave = () => {
-      cursor = null;
-      lastMoveAt = window.performance.now() - 650;
-      scheduleRender();
-    };
-
-    const randomColor = () =>
-      `#${Math.floor(Math.random() * 0xffffff)
-        .toString(16)
-        .padStart(6, '0')}`;
-    const onClick = (event) => {
-      palette.forEach((_, index) => {
-        palette[index] = randomColor();
-      });
-      bursts.push({
-        x: event.clientX,
-        y: event.clientY,
-        time: window.performance.now(),
-        rotation: Math.random() * 3,
-      });
-      if (bursts.length > 3) bursts.shift();
-      scheduleRender();
-    };
-
-    resize();
-    window.addEventListener('pointermove', onPointerMove, { passive: true });
-    window.addEventListener('pointerleave', onPointerLeave);
-    window.addEventListener('blur', onPointerLeave);
-    window.addEventListener('click', onClick);
-    window.addEventListener('resize', resize, { passive: true });
-
-    return () => {
-      window.removeEventListener('pointermove', onPointerMove);
-      window.removeEventListener('pointerleave', onPointerLeave);
-      window.removeEventListener('blur', onPointerLeave);
-      window.removeEventListener('click', onClick);
-      window.removeEventListener('resize', resize);
-      if (animationFrame) window.cancelAnimationFrame(animationFrame);
-    };
-  }, []);
-
-  return <canvas ref={canvasRef} className="cursor-tubes" aria-hidden="true" />;
-}
 function tiltCard(event) {
   if (event.pointerType !== 'mouse') return;
   const card = event.currentTarget;
@@ -1169,7 +943,6 @@ export default function App() {
   return (
     <>
       <div className="scroll-progress" aria-hidden="true" />
-      <CursorTubes />
       <Header />
       <main>
         <Hero />
