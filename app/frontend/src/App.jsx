@@ -146,11 +146,43 @@ const skills = [
 ];
 
 const certificates = [
-  ['Cisco Networking Academy', 'Ethical Hacker', 'July 2025'],
-  ['Cisco Networking Academy', 'Operating Systems Basics', 'July 2025'],
-  ['Oracle', 'Introduction to Oracle Cloud Essentials', 'June 2025'],
-  ['CoDeKu DevOps Academy', 'Docker Beginners Guide', 'Containerisation'],
-  ['University of Moratuwa', 'Web Design for Beginners', 'CODL'],
+  {
+    issuer: 'Cisco Networking Academy',
+    title: 'Ethical Hacker',
+    note: 'Issued July 2025',
+    badgeId: '6c7b5ca0-e379-420e-9d22-df4acc3b4ec8',
+    credentialUrl: 'https://www.credly.com/badges/6c7b5ca0-e379-420e-9d22-df4acc3b4ec8',
+    certificateUrl:
+      'https://www.linkedin.com/in/thushan-gamage-3a5b23334/overlay/Certifications/1531079829/treasury/?profileId=ACoAAFQr_G0BtTNDIDL673tJhV64GruZnbgMX-0',
+  },
+  {
+    issuer: 'Cisco Networking Academy',
+    title: 'Operating Systems Basics',
+    note: 'Issued July 2025',
+    badgeId: '67256fc0-2ad2-4dbe-81e9-ec6e6b728391',
+    credentialUrl: 'https://www.credly.com/badges/67256fc0-2ad2-4dbe-81e9-ec6e6b728391',
+    certificateUrl:
+      'https://www.linkedin.com/in/thushan-gamage-3a5b23334/overlay/Certifications/1806850288/treasury/?profileId=ACoAAFQr_G0BtTNDIDL673tJhV64GruZnbgMX-0',
+  },
+  {
+    issuer: 'Oracle',
+    title: 'Introduction to Oracle Cloud Essentials',
+    note: 'Issued June 2025',
+    certificateUrl:
+      'https://www.linkedin.com/in/thushan-gamage-3a5b23334/overlay/Certifications/1114744581/treasury/?profileId=ACoAAFQr_G0BtTNDIDL673tJhV64GruZnbgMX-0',
+  },
+  {
+    issuer: 'CoDeKu DevOps Academy',
+    title: 'Introduction to Containerization: Docker Beginners Guide',
+    note: 'Course completion',
+    certificateUrl:
+      'https://www.linkedin.com/in/thushan-gamage-3a5b23334/overlay/Certifications/1794961180/treasury/?profileId=ACoAAFQr_G0BtTNDIDL673tJhV64GruZnbgMX-0',
+  },
+  {
+    issuer: 'University of Moratuwa',
+    title: 'Web Design for Beginners',
+    note: 'CODL',
+  },
 ];
 
 function Arrow({ diagonal = false }) {
@@ -710,14 +742,39 @@ function Skills() {
         <div>
           <p className="eyebrow">CERTIFICATIONS &amp; PROFESSIONAL LEARNING</p>
           <div className="credential-list">
-            {certificates.map(([issuer, title, note]) => (
+            {certificates.map(({ issuer, title, note, badgeId, credentialUrl, certificateUrl }) => (
               <article className="certificate-card" key={title}>
-                <span className="certificate-seal" aria-hidden="true">
-                  ✳
-                </span>
+                <div className="certificate-preview" aria-label={`${issuer} certificate preview`}>
+                  {badgeId ? (
+                    <div
+                      className="credly-badge"
+                      data-iframe-width="112"
+                      data-iframe-height="145"
+                      data-share-badge-id={badgeId}
+                      data-share-badge-host="https://www.credly.com"
+                    />
+                  ) : (
+                    <span className="certificate-preview-mark" aria-hidden="true">
+                      ✳
+                    </span>
+                  )}
+                  <span className="certificate-preview-label">CERTIFICATE</span>
+                </div>
                 <small>{issuer}</small>
                 <b>{title}</b>
-                <span>{note}</span>
+                <span className="certificate-note">{note}</span>
+                <div className="certificate-actions">
+                  {credentialUrl && (
+                    <a href={credentialUrl} target="_blank" rel="noreferrer">
+                      Verify badge <Arrow diagonal />
+                    </a>
+                  )}
+                  {certificateUrl && (
+                    <a href={certificateUrl} target="_blank" rel="noreferrer">
+                      View certificate photo <Arrow diagonal />
+                    </a>
+                  )}
+                </div>
               </article>
             ))}
           </div>
@@ -877,6 +934,18 @@ function resetCardTilt(event) {
 }
 
 export default function App() {
+  useEffect(() => {
+    const existingScript = document.querySelector('script[data-credly-embed]');
+    if (existingScript) return undefined;
+
+    const script = document.createElement('script');
+    script.src = 'https://cdn.credly.com/assets/utilities/embed.js';
+    script.async = true;
+    script.dataset.credlyEmbed = 'true';
+    document.body.appendChild(script);
+    return () => script.remove();
+  }, []);
+
   useEffect(() => {
     if (!('IntersectionObserver' in window)) {
       document.querySelectorAll('.reveal').forEach((item) => item.classList.add('is-visible'));

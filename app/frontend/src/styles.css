@@ -1711,6 +1711,88 @@ h2 em {
   }
 }
 
+.certificate-card {
+  overflow: hidden;
+}
+.certificate-preview {
+  position: relative;
+  display: grid;
+  min-height: 154px;
+  place-items: center;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 8px;
+  background:
+    radial-gradient(circle at 50% 22%, rgba(183, 243, 75, 0.13), transparent 54%),
+    linear-gradient(135deg, #252821, #11120f 72%);
+}
+.certificate-preview::before {
+  position: absolute;
+  inset: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 4px;
+  content: '';
+  pointer-events: none;
+}
+.certificate-preview-mark {
+  color: var(--lime);
+  font-size: 2.4rem;
+  line-height: 1;
+}
+.certificate-preview-label {
+  position: absolute;
+  right: 15px;
+  bottom: 14px;
+  color: rgba(239, 239, 230, 0.56);
+  font-family: var(--mono);
+  font-size: 0.5rem;
+  letter-spacing: 0.16em;
+}
+.credly-badge {
+  z-index: 1;
+  width: 112px;
+  min-height: 145px;
+}
+.credly-badge iframe {
+  display: block;
+  max-width: 100%;
+  border: 0;
+}
+.certificate-note {
+  color: var(--quiet);
+  font-family: var(--mono);
+  font-size: 0.58rem;
+  letter-spacing: 0.04em;
+}
+.certificate-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 14px;
+  margin-top: 4px;
+}
+.certificate-actions a {
+  color: var(--lime);
+  font-family: var(--mono);
+  font-size: 0.58rem;
+  text-decoration: none;
+}
+.certificate-actions a:hover,
+.certificate-actions a:focus-visible {
+  color: var(--ink);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.certificate-actions .arrow {
+  display: inline-block;
+  margin-left: 3px;
+}
+
+@media (max-width: 700px) {
+  .certificate-preview {
+    min-height: 140px;
+  }
+}
+
 .visual-platform::before {
   background:
     radial-gradient(circle at 82% 15%, rgba(183, 243, 75, 0.2), transparent 44%),
